@@ -117,5 +117,9 @@ def twfe_event_study(
         "n_clusters": n_clusters,
         "staggered": timing.is_staggered,
         "coefficients": coefficients,
+        # Covariance of the estimated (non-reference) coefficients, in this order;
+        # used by the joint pre-trend test.
+        "coefficient_order": list(levels),
+        "covariance": [[float(v) for v in row] for row in fit.cov],
     }
     return DiagnosticResult(name=NAME, findings=tuple(findings), metrics=metrics)

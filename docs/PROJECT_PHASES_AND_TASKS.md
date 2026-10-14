@@ -1030,7 +1030,7 @@ Deliver `Classical Event-Study Diagnostic` without weakening design/identificati
 
 ### Task 4.5: Pre-Trend Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1041,14 +1041,20 @@ Deliver `Pre-Trend Diagnostics` without weakening design/identification boundari
 - Report inability to prove parallel trends.
 
 **Task-specific verification**
-- [ ] Injected pre-trend is detected in simulation.
+- [x] Injected pre-trend is detected in simulation.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/pre_trends.py` (`check_pre_trends`); the event study (Task 4.4) now also exports its clustered coefficient covariance and coefficient order.
+- Reports the pre-period coefficients (k < reference), max |pre coefficient|, the slope of a linear trend through them, and a joint Wald test with clustered covariance as F(q, G − 1). A significant joint test is blocking for a clean causal DiD interpretation (RUNBOOK "DiD pre-period problem"). Missing pre-periods yield a warning. Every result carries the caveat that a non-significant test does not prove parallel trends.
+- Tests: `tests/unit/panel/test_pre_trends.py` (no-trend panel passes with caveat; injected trend blocks and its slope is recovered; hand-checked Wald / F / p-value; no-pre-period warning; input validation; simulation: false-positive rate ≤ 0.12 at α = 0.05 and detection ≥ 80% for a 0.15/period trend). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none (parallel trends stays an assumption).
 
 ---
 
@@ -1810,9 +1816,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 4 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 5 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **28** |
+| **Total** | **65** | **51** | **14** | **29** |

@@ -4,6 +4,7 @@ from causalimpact.panel.contract import PanelSpec, PanelTiming, annotate_timing,
 from causalimpact.panel.did import TwoPeriodDiD
 from causalimpact.panel.event_study import relative_time, twfe_event_study
 from causalimpact.panel.multi_period import ComparisonGroup, SingleCohortDiD
+from causalimpact.panel.pre_trends import check_pre_trends
 
 __all__ = [
     "ComparisonGroup",
@@ -12,6 +13,7 @@ __all__ = [
     "SingleCohortDiD",
     "TwoPeriodDiD",
     "annotate_timing",
+    "check_pre_trends",
     "relative_time",
     "twfe_event_study",
     "validate_panel",
