@@ -51,7 +51,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 ## Phase 5 — Sensitivity, Heterogeneity & Policy Value
 - [x] **Task 5.1** — Specification Robustness Runner (`Core`)
 - [ ] **Task 5.2** — Unmeasured-Confounding Sensitivity Interface (`Advanced`)
-- [ ] **Task 5.3** — Weight Trimming / Overlap Sensitivity (`Core`)
+- [x] **Task 5.3** — Weight Trimming / Overlap Sensitivity (`Core`)
 - [ ] **Task 5.4** — Pre-Specified Subgroup Effects (`Core`)
 - [ ] **Task 5.5** — Exploratory Heterogeneity Guardrails (`Core`)
 - [ ] **Task 5.6** — CATE Baseline (`Advanced`)

@@ -1244,7 +1244,7 @@ Deliver `Unmeasured-Confounding Sensitivity Interface` without weakening design/
 
 ### Task 5.3: Weight Trimming / Overlap Sensitivity
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1255,14 +1255,20 @@ Deliver `Weight Trimming / Overlap Sensitivity` without weakening design/identif
 - Track estimand/population changes caused by restriction.
 
 **Task-specific verification**
-- [ ] Restricted sample/estimand metadata updates correctly.
+- [x] Restricted sample/estimand metadata updates correctly.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/sensitivity/trimming.py` (`TrimmingPolicy`, `PolicyKind`, `trimmed_estimand`, `run_trimming_sensitivity`, `TrimmingReport`, `TrimmingOutcome`); `WeightingEstimator` gains an optional `truncation_quantile` with `truncate_weights` (within-arm caps), recorded in `details`.
+- Policies are declared (timestamped, fingerprinted) before running. Propensity trimming (α ≤ e ≤ 1 − α) restricts the population, so it is reported against a derived estimand (`<id>__trim_<α>`, target population with the inclusion criterion added); the original estimand object is unchanged. Weight truncation keeps the population and estimand but is flagged as biasing the estimator. Per policy: kept / dropped counts overall and by arm, `population_changed`, estimate or recorded error. The trimming propensity model is fitted once on the full data and fingerprinted.
+- Tests: `tests/unit/sensitivity/test_trimming.py` (derived estimand metadata; kept counts equal to an independent propensity computation; estimates carry the derived estimand id; truncation keeps the population and records its quantile; failures recorded; truncation requires a weighting estimator; within-arm caps; policy validation; declaration ordering). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: trimmed results are explicitly re-labelled with derived estimands.
 
 ---
 
@@ -1831,8 +1837,8 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
-| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 1 |
+| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 2 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **31** |
+| **Total** | **65** | **51** | **14** | **32** |

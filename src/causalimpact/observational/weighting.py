@@ -84,6 +84,23 @@ def compute_weights(scheme: WeightScheme, e: np.ndarray, treated: np.ndarray) ->
     return out
 
 
+def truncate_weights(weights: np.ndarray, treated: np.ndarray, quantile: float) -> np.ndarray:
+    """Cap weights at the ``quantile`` of their own arm.
+
+    Truncation keeps every unit (the population is unchanged) but biases the estimator
+    for the original estimand in exchange for lower variance; it is a sensitivity
+    device, never a silent default.
+    """
+    if not 0.5 < quantile < 1.0:
+        raise ValueError("truncation quantile must be in (0.5, 1)")
+    t = np.asarray(treated, dtype=bool)
+    out = weights.astype(float).copy()
+    for mask in (t, ~t):
+        cap = float(np.quantile(out[mask], quantile))
+        out[mask] = np.minimum(out[mask], cap)
+    return out
+
+
 def normalized_weights(weights: np.ndarray, treated: np.ndarray) -> np.ndarray:
     """Weights rescaled to sum to one within each arm (Hajek normalisation)."""
     t = np.asarray(treated, dtype=bool)
@@ -160,6 +177,7 @@ class WeightingEstimator:
     propensity_model: PropensityModel = field(default_factory=LogisticPropensity)
     overlap_policy: OverlapPolicy = field(default_factory=OverlapPolicy)
     unit_id: str = "unit_id"
+    truncation_quantile: float | None = None
 
     @property
     def name(self) -> str:
@@ -174,6 +192,8 @@ class WeightingEstimator:
             data, self.treatment, self.covariates, model=self.propensity_model, unit_id=self.unit_id
         )
         w = compute_weights(self.scheme, ps.scores, ps.treated)
+        if self.truncation_quantile is not None:
+            w = truncate_weights(w, ps.treated, self.truncation_quantile)
         y = data[outcome].to_numpy(dtype=float)
         return hajek_effect(y, w, ps.treated), w, ps.scores
 
@@ -230,6 +250,7 @@ class WeightingEstimator:
             n_control=int((~t).sum()),
             details={
                 "scheme": self.scheme.value,
+                "truncation_quantile": self.truncation_quantile,
                 "propensity_fingerprint": ps.fingerprint,
                 "propensity_config": ps.nuisance_config,
                 "n_bootstrap": self.n_bootstrap,
