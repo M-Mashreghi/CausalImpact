@@ -220,3 +220,30 @@ class TestVersioning:
         )
         with pytest.raises(KeyError, match="register DAG"):
             DagRegistry().register_adjustment_set(adj)
+
+
+def test_registry_json_is_identical_across_hash_seeds() -> None:
+    import os
+    import subprocess
+    import sys
+
+    code = (
+        "from tests.unit.dags.test_dag import PEARL, M_BIAS_OBSERVED;"
+        "from causalimpact.dags import AdjustmentSet, DagRegistry;"
+        "r = DagRegistry();"
+        "[r.register_dag(g) for g in (PEARL, M_BIAS_OBSERVED)];"
+        "r.register_adjustment_set(AdjustmentSet(dag_version=PEARL.version, treatment='T',"
+        "outcome='Y', variables=frozenset({'Z1', 'Z2', 'Z3'}), rationale='r'));"
+        "print(r.to_json())"
+    )
+    outputs = {
+        subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True,
+            text=True,
+            check=True,
+            env={**os.environ, "PYTHONHASHSEED": seed},
+        ).stdout
+        for seed in ("1", "2", "3", "4")
+    }
+    assert len(outputs) == 1

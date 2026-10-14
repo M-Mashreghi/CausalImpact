@@ -23,7 +23,7 @@ from collections.abc import Callable, Iterable
 from enum import StrEnum
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from causalimpact.domain.types import NonBlankStr
 
@@ -52,6 +52,10 @@ class CausalDAG(BaseModel):
     nodes: tuple[DagNode, ...]
     edges: tuple[tuple[NonBlankStr, NonBlankStr], ...]
     declared_colliders: frozenset[NonBlankStr] = Field(default_factory=frozenset)
+
+    @field_serializer("declared_colliders")
+    def _sorted_colliders(self, value: frozenset[str]) -> list[str]:
+        return sorted(value)  # set order depends on the per-process hash seed
 
     @model_validator(mode="after")
     def _well_formed(self) -> Self:
@@ -250,6 +254,10 @@ class AdjustmentSet(BaseModel):
     outcome: NonBlankStr
     variables: frozenset[NonBlankStr]
     rationale: NonBlankStr
+
+    @field_serializer("variables")
+    def _sorted_variables(self, value: frozenset[str]) -> list[str]:
+        return sorted(value)  # set order depends on the per-process hash seed
 
     @property
     def version(self) -> str:
