@@ -150,7 +150,7 @@ Deliver `Estimand Registry` without weakening design/identification boundaries.
 
 ### Task 1.5: Causal DAG & Adjustment-Set Registry
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -161,15 +161,22 @@ Deliver `Causal DAG & Adjustment-Set Registry` without weakening design/identifi
 - Implement guardrails for mediators, descendants and declared colliders.
 
 **Task-specific verification**
-- [ ] Known backdoor examples yield expected safe/unsafe flags.
-- [ ] Versioning is reproducible.
+- [x] Known backdoor examples yield expected safe/unsafe flags.
+- [x] Versioning is reproducible.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/dags/graph.py` (`CausalDAG`, `DagNode`, `AdjustmentSet`, `assess_adjustment_set`, `AdjustmentAssessment`, `VariableFlag`), `src/causalimpact/dags/registry.py` (`DagRegistry`). No graph library dependency: transparent BFS/moral-graph code.
+- DAGs validate acyclicity, declared nodes, no self-loops/duplicates, and nodes may be marked unobserved. Versions are content hashes (`dag_…`, `adjset_…`) independent of declaration order; an adjustment set is bound to the exact DAG version it was built for.
+- Guardrails: per-variable flags for mediator, descendant of treatment, declared collider, unobserved, not in DAG, and treatment/outcome. The backdoor criterion is checked exactly (no descendants + d-separation in the backdoor graph via the moralised ancestral graph), so collider adjustment that opens a path (M-bias) fails even without a declaration. Open backdoor paths are enumerated for explanation; every assessment carries the caveat that the DAG itself is an untestable assumption.
+- Tests: `tests/unit/dags/test_dag.py` — confounder, mediator, non-mediator descendant, M-bias (with/without blocking), declared collider, latent confounder, Pearl backdoor example (7 sets), path-enumeration/d-separation agreement, versioning and registry round-trip. Suite: 228 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1637,7 +1644,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 4 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 5 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 0 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
@@ -1645,4 +1652,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **4** |
+| **Total** | **65** | **51** | **14** | **5** |

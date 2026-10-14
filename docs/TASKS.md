@@ -6,7 +6,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 1.2** — Canonical StudyDesign & AnalysisRun Domain Models (`Core`)
 - [x] **Task 1.3** — Treatment, Outcome & Covariate Data Contracts (`Core`)
 - [x] **Task 1.4** — Estimand Registry (`Core`)
-- [ ] **Task 1.5** — Causal DAG & Adjustment-Set Registry (`Core`)
+- [x] **Task 1.5** — Causal DAG & Adjustment-Set Registry (`Core`)
 - [ ] **Task 1.6** — Assumption Registry & Design Validation (`Core`)
 - [ ] **Task 1.7** — Dataset Versioning, Seeds & Reproducible Run Identity (`Core`)
 

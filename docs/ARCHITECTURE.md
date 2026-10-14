@@ -71,6 +71,14 @@ Must record enough metadata to reproduce the result:
   `Estimator` protocol and declare `supported_estimands`; `run_estimator` refuses
   unsupported estimands and outputs that declare a different estimand.
 
+## DAGs (`causalimpact.dags`)
+
+- `CausalDAG` and `AdjustmentSet` versions are content hashes, so an AnalysisRun's stored
+  `dag_version` / `adjustment_set_version` identify exactly what was assumed.
+- `assess_adjustment_set` flags mediators, treatment descendants, declared colliders and
+  unobserved variables, and checks the backdoor criterion by d-separation. It validates
+  consistency with the declared DAG, never the DAG itself.
+
 ## Invariants
 
 1. Design precedes estimation.
