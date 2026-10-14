@@ -5,6 +5,14 @@ from causalimpact.observational.eligibility import (
     VariableDecision,
     screen_adjustment_candidates,
 )
+from causalimpact.observational.overlap import (
+    OverlapPolicy,
+    OverlapRefusedError,
+    check_overlap,
+    ensure_overlap,
+    estimand_weights,
+    kish_ess,
+)
 from causalimpact.observational.propensity import (
     ConvergenceError,
     LogisticPropensity,
@@ -17,9 +25,15 @@ __all__ = [
     "ConvergenceError",
     "CovariateScreen",
     "LogisticPropensity",
+    "OverlapPolicy",
+    "OverlapRefusedError",
     "PropensityModel",
     "PropensityScores",
     "VariableDecision",
+    "check_overlap",
+    "ensure_overlap",
+    "estimand_weights",
     "estimate_propensity",
+    "kish_ess",
     "screen_adjustment_candidates",
 ]

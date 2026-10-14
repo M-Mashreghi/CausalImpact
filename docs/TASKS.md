@@ -27,7 +27,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 ## Phase 3 — Observational Causal Inference & Double ML
 - [x] **Task 3.1** — Observational Covariate Temporal Eligibility (`Core`)
 - [x] **Task 3.2** — Propensity Score Estimation (`Core`)
-- [ ] **Task 3.3** — Overlap / Positivity Diagnostics (`Core`)
+- [x] **Task 3.3** — Overlap / Positivity Diagnostics (`Core`)
 - [ ] **Task 3.4** — Matching Engine & Matched-Sample Diagnostics (`Core`)
 - [ ] **Task 3.5** — IPW / Stabilized / Overlap Weighting (`Core`)
 - [ ] **Task 3.6** — Outcome Regression Adjustment (`Core`)

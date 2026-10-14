@@ -668,7 +668,7 @@ Deliver `Propensity Score Estimation` without weakening design/identification bo
 
 ### Task 3.3: Overlap / Positivity Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -679,14 +679,21 @@ Deliver `Overlap / Positivity Diagnostics` without weakening design/identificati
 - Compute overlap violations, support/effective sample diagnostics and refusal thresholds.
 
 **Task-specific verification**
-- [ ] Poor-overlap fixture flagged.
+- [x] Poor-overlap fixture flagged.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/observational/overlap.py` (`check_overlap`, `OverlapPolicy`, `ensure_overlap`, `OverlapRefusedError`, `estimand_weights`, `kish_ess`).
+- Estimand-aware positivity: ATE checks all units in (ε, 1−ε); ATT only treated units below 1−ε; ATC only control units above ε. Reports violation counts/fraction, common-support interval and units outside it, Kish effective sample size of the estimand's IPW weights per arm, per-arm propensity quantiles and plot-ready histograms with bin edges.
+- Thresholds are an explicit, recorded `OverlapPolicy` (default ε = 0.01; warn on any violation or ESS < 30%; block on > 5% violating or ESS < 10%). `ensure_overlap` raises `OverlapRefusedError` on a blocking result so estimators refuse instead of extrapolating.
+- Tests: `tests/unit/observational/test_overlap.py` (good overlap passes; strong confounding blocks and refuses; ATT ignores irrelevant control-side violations that block ATE; warning band; plot data and policy recorded; weight/ESS formulas; simulation: violation fraction increases monotonically with confounding strength). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1738,11 +1745,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 11 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 12 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **18** |
+| **Total** | **65** | **51** | **14** | **19** |
