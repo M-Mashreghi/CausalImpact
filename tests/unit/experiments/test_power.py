@@ -30,7 +30,8 @@ class TestReferenceExamples:
         assert (plan.n_treated, plan.n_control) == (63, 63)
 
     def test_binary_ten_to_twelve_percent(self) -> None:
-        # Unpooled normal approximation: (z_a + z_b)^2 (0.12*0.88 + 0.1*0.9) / 0.02^2 = 3838.4 -> 3839.
+        # Unpooled normal approximation:
+        # (z_a + z_b)^2 (0.12*0.88 + 0.1*0.9) / 0.02^2 = 3838.4 -> 3839 per arm.
         plan = sample_size(BIN, 0.02)
         expected = (1.959964 + 0.841621) ** 2 * (0.12 * 0.88 + 0.10 * 0.90) / 0.02**2
         assert plan.n_treated == math.ceil(expected) == 3839
