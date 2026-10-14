@@ -937,7 +937,7 @@ Deliver `Panel Data Contract & Treatment Timing Model` without weakening design/
 
 ### Task 4.2: Two-Period Difference-in-Differences
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -948,14 +948,21 @@ Deliver `Two-Period Difference-in-Differences` without weakening design/identifi
 - Return group-time descriptive components.
 
 **Task-specific verification**
-- [ ] Known-effect DGP recovered.
+- [x] Known-effect DGP recovered.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/did.py` (`TwoPeriodDiD`).
+- Targets the ATT only (identified under parallel trends and no anticipation, recorded as assumptions in `details`). DiD = mean unit first difference (treated) − mean unit first difference (comparison); comparison = never-treated plus not-yet-treated units (count reported). Welch/Neyman inference on unit first differences, i.e. clustered on unit. The four group-period means are returned as descriptive components.
+- Refuses: invalid panel timing (Task 4.1 validation), units treated at or before the pre period, units missing either period, fewer than two units per group.
+- Tests: `tests/unit/panel/test_did.py` (hand-computed 2x2 with components and SE; known effect recovered despite strong level selection where the cross-sectional contrast is biased by > 5; injected trend gap shows the estimate is not identified under a parallel-trends violation; refusals; simulation: unbiased, coverage in [0.92, 0.98]). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1789,9 +1796,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 1 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 2 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **25** |
+| **Total** | **65** | **51** | **14** | **26** |
