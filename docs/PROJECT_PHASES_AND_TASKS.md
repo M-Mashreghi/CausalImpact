@@ -117,7 +117,7 @@ Deliver `Treatment, Outcome & Covariate Data Contracts` without weakening design
 
 ### Task 1.4: Estimand Registry
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -128,15 +128,23 @@ Deliver `Estimand Registry` without weakening design/identification boundaries.
 - Require estimator outputs to declare the estimand they target.
 
 **Task-specific verification**
-- [ ] Estimand serialization round-trips.
-- [ ] Mismatched estimand/output contract fails.
+- [x] Estimand serialization round-trips.
+- [x] Mismatched estimand/output contract fails.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/domain/estimands.py` (`Estimand`, `EstimandType` ATE/ATT/ATC/CATE/ITT, `TreatmentBasis`, `EffectScale`, `EffectEstimate`, `EstimandRegistry`, `check_estimate_targets`), `src/causalimpact/estimators/base.py` (`Estimator` protocol, `run_estimator`).
+- Every estimand carries treatment, outcome, `TargetPopulation`, treatment basis and scale. Rules: CATE requires conditioning variables (never treatment/outcome), other types reject them; ITT must be defined on assignment.
+- Estimator outputs (`EffectEstimate`) must declare `estimand_id` and `estimand_type` and are numerically sane (finite, SE ≥ 0, estimate inside CI). `run_estimator` refuses unsupported estimand types before fitting and rejects outputs that declare a different estimand, estimator or confidence level.
+- Registry is immutable per id: identical re-registration is a no-op, redefinition is refused; JSON round-trip is byte-stable.
+- Tests: `tests/unit/domain/test_estimands.py`. Suite: 198 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1629,7 +1637,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 3 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 4 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 0 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
@@ -1637,4 +1645,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **3** |
+| **Total** | **65** | **51** | **14** | **4** |

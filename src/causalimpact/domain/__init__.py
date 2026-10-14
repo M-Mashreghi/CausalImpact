@@ -2,6 +2,17 @@
 
 from causalimpact.domain.analysis_run import ALLOWED_RUN_TRANSITIONS, AnalysisRun, RunStatus
 from causalimpact.domain.errors import DesignNotReadyError, DomainError, IllegalTransitionError
+from causalimpact.domain.estimands import (
+    ESTIMAND_SUBPOPULATION,
+    EffectEstimate,
+    EffectScale,
+    Estimand,
+    EstimandMismatchError,
+    EstimandRegistry,
+    EstimandType,
+    TreatmentBasis,
+    check_estimate_targets,
+)
 from causalimpact.domain.ids import DesignId, RunId, new_design_id, new_run_id
 from causalimpact.domain.study_design import (
     ALLOWED_DESIGN_TRANSITIONS,
@@ -33,6 +44,7 @@ __all__ = [
     "ALLOWED_DESIGN_TRANSITIONS",
     "ALLOWED_RUN_TRANSITIONS",
     "ANALYZABLE_STATUSES",
+    "ESTIMAND_SUBPOPULATION",
     "AnalysisRun",
     "CovariateDType",
     "CovariateSpec",
@@ -42,8 +54,14 @@ __all__ = [
     "DesignNotReadyError",
     "DesignStatus",
     "DomainError",
+    "EffectEstimate",
+    "EffectScale",
     "Eligibility",
     "EligibilityDecision",
+    "Estimand",
+    "EstimandMismatchError",
+    "EstimandRegistry",
+    "EstimandType",
     "IllegalTransitionError",
     "MissingnessPolicy",
     "OutcomeKind",
@@ -54,9 +72,11 @@ __all__ = [
     "StatusChange",
     "StudyDesign",
     "TargetPopulation",
+    "TreatmentBasis",
     "TreatmentKind",
     "TreatmentSpec",
     "TriState",
+    "check_estimate_targets",
     "classify_covariate",
     "new_design_id",
     "new_run_id",

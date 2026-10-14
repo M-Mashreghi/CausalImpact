@@ -67,6 +67,9 @@ Must record enough metadata to reproduce the result:
   pins `design_id` + `design_version`, and must use the design's estimand, DAG version and
   adjustment-set version.
 - Runs are never overwritten; a bad run moves to `Invalidated` with a reason.
+- Estimands live in an `EstimandRegistry` (immutable per id). Estimators implement the
+  `Estimator` protocol and declare `supported_estimands`; `run_estimator` refuses
+  unsupported estimands and outputs that declare a different estimand.
 
 ## Invariants
 
