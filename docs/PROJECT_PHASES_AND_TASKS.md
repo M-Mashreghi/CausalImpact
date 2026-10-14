@@ -1656,7 +1656,7 @@ Deliver `Synthetic Data Generator with Known Effects` without weakening design/i
 
 ### Task 7.2: Estimator Bias / RMSE Benchmark Harness
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1667,14 +1667,20 @@ Deliver `Estimator Bias / RMSE Benchmark Harness` without weakening design/ident
 - Produce bias/RMSE and failure counts.
 
 **Task-specific verification**
-- [ ] Simple unbiased estimator benchmark passes tolerance.
+- [x] Simple unbiased estimator benchmark passes tolerance.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/simulation/benchmark.py` (`BenchmarkCase`, `run_benchmark`, `BenchmarkResult`, `bias_within_tolerance`).
+- Each replicate simulates fresh data from a replicate seed derived from the benchmark seed, builds the estimator for that seed, runs it through `run_estimator` and compares with that replicate's truth. Reports bias with Monte Carlo SE, RMSE, empirical SD, mean reported SE, failure counts by exception type and failure rate, and keeps per-replicate estimates, truths, SEs and CIs (used for coverage in Task 7.3). Failures are counted, never dropped; a result with no successes cannot pass the bias tolerance.
+- Tests: `tests/simulation/test_benchmark.py` (difference in means is unbiased within tolerance with RMSE ≈ SD and mean SE ≈ empirical SD; reproducible by seed; attrition-induced refusals counted as failures; confounded naive contrast fails the tolerance). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1899,7 +1905,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 8 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 9 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
@@ -1907,4 +1913,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **42** |
+| **Total** | **65** | **51** | **14** | **43** |
