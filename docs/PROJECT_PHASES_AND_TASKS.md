@@ -1440,7 +1440,7 @@ Deliver `Core Causal Analysis Service` without weakening design/identification b
 
 ### Task 6.2: FastAPI Study & Analysis API
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1451,14 +1451,21 @@ Deliver `FastAPI Study & Analysis API` without weakening design/identification b
 - Never expose secrets or raw stack traces.
 
 **Task-specific verification**
-- [ ] API create/run/read contract tests.
+- [x] API create/run/read contract tests.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/api/app.py` (`create_app`, `ApiState`, typed request/response models), `src/causalimpact/services/estimator_factory.py` (whitelisted, discriminated estimator configurations → estimators). Dependencies: `fastapi`, `uvicorn` (runtime, justified by this task) and `httpx2` (dev, TestClient transport). The `Estimator` protocol's `name` / `supported_estimands` became read-only properties so frozen estimators satisfy it.
+- Endpoints: `GET /health`; `POST /estimands`, `GET /estimands/{id}`; `POST /dags`, `POST /adjustment-sets` (return content versions); `POST /designs` (Draft only), `GET /designs/{id}`, `POST /designs/{id}/transitions` (AnalysisReady runs the readiness validator); `POST /designs/{id}/runs` (estimator config, records, seed, confidence level, optional experiment spec adding SRM and attrition diagnostics; overlap diagnostic added automatically for propensity methods), `GET /runs/{id}`, `GET /designs/{id}/runs`.
+- No causal computation in the API: it builds typed inputs and calls `AnalysisService`. Errors are typed bodies: 409 design-not-ready (with the problem list) and domain violations, 422 validation errors, 404 missing resources, and a generic 500 with an opaque error id that never returns messages, paths, settings or traces.
+- Tests: `tests/integration/test_api.py` (RCT create → transition → run → read → list; SRM run "not supported"; readiness problems listed; draft run refused; observational run adds overlap diagnostic; 404/422 contract errors; 500 does not leak secrets; health). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1856,9 +1863,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 7 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 8 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **35** |
+| **Total** | **65** | **51** | **14** | **36** |

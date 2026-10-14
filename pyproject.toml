@@ -16,6 +16,9 @@ dependencies = [
     "pandas>=2.2",
     "scipy>=1.13",
     "pydantic>=2.7",
+    # Task 6.2: typed HTTP API over the analysis service.
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
 ]
 
 [project.optional-dependencies]
@@ -26,6 +29,7 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "pandas-stubs>=2.2",
+    "httpx2>=2.0",  # FastAPI/Starlette TestClient transport
 ]
 
 [tool.hatch.build.targets.wheel]

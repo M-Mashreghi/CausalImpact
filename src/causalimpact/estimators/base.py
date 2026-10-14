@@ -21,8 +21,11 @@ from causalimpact.domain.estimands import (
 
 
 class Estimator(Protocol):
-    name: str
-    supported_estimands: frozenset[EstimandType]
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def supported_estimands(self) -> frozenset[EstimandType]: ...
 
     def estimate(
         self, data: pd.DataFrame, estimand: Estimand, *, confidence_level: float

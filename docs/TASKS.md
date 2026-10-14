@@ -60,7 +60,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 
 ## Phase 6 — API, Dashboard & Reproducible Workflow
 - [x] **Task 6.1** — Core Causal Analysis Service (`Core`)
-- [ ] **Task 6.2** — FastAPI Study & Analysis API (`Core`)
+- [x] **Task 6.2** — FastAPI Study & Analysis API (`Core`)
 - [ ] **Task 6.3** — Streamlit Study Designer (`Core`)
 - [ ] **Task 6.4** — Diagnostics Dashboard (`Core`)
 - [ ] **Task 6.5** — Estimator / Specification Comparison (`Core`)
