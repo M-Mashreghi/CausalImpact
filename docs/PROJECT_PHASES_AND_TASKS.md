@@ -468,7 +468,7 @@ Deliver `Power, MDE & Sample Size Engine` without weakening design/identificatio
 
 ### Task 2.8: Guardrail Metrics & Multiple-Testing Policy
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -479,14 +479,21 @@ Deliver `Guardrail Metrics & Multiple-Testing Policy` without weakening design/i
 - Implement approved multiplicity corrections and decision metadata.
 
 **Task-specific verification**
-- [ ] Correction methods match reference fixtures.
+- [x] Correction methods match reference fixtures.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/experiments/decision.py` (`CorrectionMethod`, `adjust_p_values`, `DecisionPolicy`, `GuardrailRule`, `Direction`, `guardrail_status`, `decide`, `Decision`, `DecisionLabel`, `GuardrailStatus`). Metric roles come from `ExperimentSpec` (one primary, secondary, guardrail; roles exclusive).
+- Corrections: none, Bonferroni, Holm, Benjamini–Hochberg (R `p.adjust` semantics). Secondary metrics are reported with adjusted p-values and never drive the label. Guardrails are deliberately not adjusted (adjustment would hide harm); each needs a declared direction and tolerable degradation: violated if harm is significant, unresolved if the CI cannot rule out harm beyond tolerance.
+- `decide` requires a policy declared before analysis (timestamp check), a rule for every guardrail, results for every metric at confidence 1 − α, and returns `blocked` if any trust diagnostic is blocking, else `no_ship` / `inconclusive` / `ship`, with reasons and the policy fingerprint.
+- Tests: `tests/unit/experiments/test_decision.py` (two R `p.adjust` reference fixtures incl. ties and caps; all decision paths; guardrail directions; policy-timing, coverage and confidence-level validation). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1709,11 +1716,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 7 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 8 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **14** |
+| **Total** | **65** | **51** | **14** | **15** |
