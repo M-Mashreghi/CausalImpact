@@ -1189,7 +1189,7 @@ Deliver `Placebo / Falsification Tests` without weakening design/identification 
 
 ### Task 5.1: Specification Robustness Runner
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1200,14 +1200,21 @@ Deliver `Specification Robustness Runner` without weakening design/identificatio
 - Store every attempted spec, not only favorable ones.
 
 **Task-specific verification**
-- [ ] All configured specs appear in output.
+- [x] All configured specs appear in output.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/sensitivity/specification.py` (`SpecificationVariant`, `SpecificationGrid`, `run_specifications`, `SpecificationReport`, `SpecificationOutcome`, `SpecStatus`).
+- A grid is declared up front (timestamp, primary variant, content fingerprint over every variant's estimator definition) and must predate the run. Every declared variant is run against the same estimand and recorded in declaration order: `succeeded` (with the full estimate), `refused` (estimand mismatch, blocking overlap, too few clusters) or `failed` (with the error). Nothing is filtered, ranked or selected.
+- Summary: counts by status, primary status, min/median/max estimate, share of CIs excluding zero, and share with the same sign as the primary.
+- Tests: `tests/unit/sensitivity/test_specification.py` (five declared specs including a refused ATO variant and a failing one all appear in order with reasons; poor overlap recorded as refusal; run-before-declaration refused; fingerprint changes with the grid; grid validation). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1824,8 +1831,8 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
-| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
+| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 1 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **30** |
+| **Total** | **65** | **51** | **14** | **31** |

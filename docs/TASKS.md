@@ -49,7 +49,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [ ] **Task 4.10** — Placebo / Falsification Tests (`Advanced`)
 
 ## Phase 5 — Sensitivity, Heterogeneity & Policy Value
-- [ ] **Task 5.1** — Specification Robustness Runner (`Core`)
+- [x] **Task 5.1** — Specification Robustness Runner (`Core`)
 - [ ] **Task 5.2** — Unmeasured-Confounding Sensitivity Interface (`Advanced`)
 - [ ] **Task 5.3** — Weight Trimming / Overlap Sensitivity (`Core`)
 - [ ] **Task 5.4** — Pre-Specified Subgroup Effects (`Core`)
