@@ -80,4 +80,4 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 8.2** — Observability & Health Checks (`Core`)
 - [x] **Task 8.3** — Dockerization & Demo Stack (`Core`)
 - [x] **Task 8.4** — GitHub Actions CI & Research Gates (`Core`)
-- [ ] **Task 8.5** — Operational Runbook, Security & Release Checklist (`Core`)
+- [x] **Task 8.5** — Operational Runbook, Security & Release Checklist (`Core`)

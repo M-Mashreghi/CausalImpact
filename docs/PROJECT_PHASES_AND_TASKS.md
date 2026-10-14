@@ -1923,7 +1923,7 @@ Deliver `GitHub Actions CI & Research Gates` without weakening design/identifica
 
 ### Task 8.5: Operational Runbook, Security & Release Checklist
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1934,14 +1934,20 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 - Include reproducibility and model-risk checklist.
 
 **Task-specific verification**
-- [ ] Release checklist complete on demo release.
+- [x] Release checklist complete on demo release.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `docs/RUNBOOK.md` gains an Operations section (start/stop with and without Docker, health and readiness, structured logs and error ids, SQLite backup and recovery, result invalidation); `docs/SECURITY.md` (secrets and configuration, log scrubbing, synthetic data, dependency locking and audit, container hardening, vulnerability reporting); `docs/RELEASE_CHECKLIST.md` (quality gates, security, reproducibility and model-risk checklist); `scripts/invalidate_run.py` (append-only invalidation by run id or fingerprint); `scripts/demo_release.py` (runs the three demo analyses, exports bundles, verifies re-runs).
+- Demo release: `docs/releases/v0.1.0-demo.md` with every checklist item ticked and evidenced — CI run 38630903733 on release-candidate commit c8bf5ca green on all six jobs (including the container smoke test and pip-audit); research-gate numbers; the three demo analyses re-run from bundles with `reproduced = True`; demo datasets regenerate byte-identically; deferred Advanced capabilities and known limitations listed.
+- Tests: `tests/integration/test_operations.py` (invalidation script keeps history; operational docs cover required topics; demo release checklist has evidence for every template item). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1956,5 +1962,5 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 7 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 5 |
-| 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 4 |
-| **Total** | **65** | **51** | **14** | **50** |
+| 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 5 |
+| **Total** | **65** | **51** | **14** | **51** |
