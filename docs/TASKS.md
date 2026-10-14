@@ -25,7 +25,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [ ] **Task 2.12** — Sequential Monitoring / Peeking Guardrails (`Advanced`)
 
 ## Phase 3 — Observational Causal Inference & Double ML
-- [ ] **Task 3.1** — Observational Covariate Temporal Eligibility (`Core`)
+- [x] **Task 3.1** — Observational Covariate Temporal Eligibility (`Core`)
 - [ ] **Task 3.2** — Propensity Score Estimation (`Core`)
 - [ ] **Task 3.3** — Overlap / Positivity Diagnostics (`Core`)
 - [ ] **Task 3.4** — Matching Engine & Matched-Sample Diagnostics (`Core`)
