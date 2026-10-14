@@ -102,6 +102,8 @@ class EffectEstimate(BaseModel):
     ci_upper: float
     confidence_level: float = Field(gt=0.0, lt=1.0)
     inference_method: NonBlankStr
+    p_value: float | None = Field(default=None, ge=0.0, le=1.0)
+    degrees_of_freedom: float | None = Field(default=None, gt=0.0)
     n_units: int = Field(ge=1)
     n_treated: int | None = Field(default=None, ge=0)
     n_control: int | None = Field(default=None, ge=0)

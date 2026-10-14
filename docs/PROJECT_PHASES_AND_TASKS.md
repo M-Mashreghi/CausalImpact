@@ -343,7 +343,7 @@ Deliver `Baseline Balance Diagnostics` without weakening design/identification b
 
 ### Task 2.4: Difference-in-Means & Difference-in-Proportions
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -354,15 +354,22 @@ Deliver `Difference-in-Means & Difference-in-Proportions` without weakening desi
 - Return estimate, SE/CI and sample counts.
 
 **Task-specific verification**
-- [ ] Known-effect simulation is approximately unbiased.
-- [ ] Null fixture CI behavior is sensible.
+- [x] Known-effect simulation is approximately unbiased.
+- [x] Null fixture CI behavior is sensible.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/experiments/estimators.py` (`DifferenceInMeans`, `DifferenceInProportions`, `split_arms`), both implementing the `Estimator` protocol. `EffectEstimate` gains optional `p_value` and `degrees_of_freedom`.
+- Both target ITT only (units analysed as assigned) and refuse ATE. Difference in means: Neyman variance with Welch–Satterthwaite t interval. Difference in proportions: unpooled Wald variance with normal interval; degenerate 0/1-only arms are refused rather than reported with a zero-width CI.
+- Missing outcomes, unknown arm labels, arms with < 2 units and a treatment column that differs from the estimand are refused; nothing is dropped silently.
+- Tests: `tests/unit/experiments/test_estimators.py` (hand-computed Welch fixture agreeing with `scipy.stats.ttest_ind(equal_var=False)`; hand-computed Wald fixture; refusals; simulations: bias within 4 Monte Carlo SEs for three known effects, null 95% CI coverage in [0.93, 0.97] for both estimators). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none (ITT only).
 
 ---
 
@@ -1681,11 +1688,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 3 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 4 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **10** |
+| **Total** | **65** | **51** | **14** | **11** |

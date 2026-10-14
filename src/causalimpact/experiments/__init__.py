@@ -1,6 +1,7 @@
 """Randomized-experiment trust checks and estimators."""
 
 from causalimpact.experiments.balance import check_baseline_balance
+from causalimpact.experiments.estimators import DifferenceInMeans, DifferenceInProportions
 from causalimpact.experiments.integrity import check_assignment_integrity
 from causalimpact.experiments.spec import Arm, ExperimentSpec, MonitoringPolicy
 from causalimpact.experiments.srm import (
@@ -12,6 +13,8 @@ from causalimpact.experiments.srm import (
 __all__ = [
     "DEFAULT_SRM_ALPHA",
     "Arm",
+    "DifferenceInMeans",
+    "DifferenceInProportions",
     "ExperimentSpec",
     "MonitoringPolicy",
     "check_assignment_integrity",
