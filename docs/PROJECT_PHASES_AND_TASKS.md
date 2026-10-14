@@ -730,7 +730,7 @@ Deliver `Matching Engine & Matched-Sample Diagnostics` without weakening design/
 
 ### Task 3.5: IPW / Stabilized / Overlap Weighting
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -741,15 +741,22 @@ Deliver `IPW / Stabilized / Overlap Weighting` without weakening design/identifi
 - Report weight distribution and effective sample size.
 
 **Task-specific verification**
-- [ ] Weights normalize as documented.
-- [ ] Extreme-weight fixture surfaced.
+- [x] Weights normalize as documented.
+- [x] Extreme-weight fixture surfaced.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/observational/weighting.py` (`WeightScheme`, `SCHEME_ESTIMAND`, `compute_weights`, `normalized_weights`, `hajek_effect`, `weight_diagnostics`, `WeightingEstimator`). New `EstimandType.ATO` (overlap population) added to the estimand registry, because overlap weights do not target the ATE.
+- Explicit scheme → estimand mapping enforced by `supported_estimands`: ipw / stabilized → ATE, att → ATT, atc → ATC, overlap → ATO. Hajek estimator (weights normalised to sum to one within each arm). Propensity-based schemes call the Task 3.3 overlap check and refuse when it is blocking; overlap weights (bounded by design) are still available.
+- Uncertainty: nonparametric bootstrap of the whole pipeline (propensity re-estimated per replicate) with a seed derived from the run seed; > 5% failed replicates raises. `details` carries the scheme, propensity config and fingerprint, bootstrap settings, and the weight distribution (min / max / quantiles / CV, Kish ESS, max unit share, extreme-weight counts per arm).
+- Tests: `tests/unit/observational/test_weighting.py` (hand-computed weights for all 5 schemes; within-arm normalisation; hand-computed Hajek effect; stabilized weights average 1; extreme-weight fixture warns; overlap weights cannot be reported as ATE; poor overlap refuses IPW but allows ATO; seeded bootstrap reproducible; simulation with heterogeneous effects: each scheme recovers its own estimand while the naive contrast is biased by > 1). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: ATO estimand added (documented above).
 
 ---
 
@@ -1752,11 +1759,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 13 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 14 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **20** |
+| **Total** | **65** | **51** | **14** | **21** |

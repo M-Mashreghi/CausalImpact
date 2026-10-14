@@ -26,6 +26,7 @@ class EstimandType(StrEnum):
     ATC = "ATC"
     CATE = "CATE"
     ITT = "ITT"
+    ATO = "ATO"
 
 
 class TreatmentBasis(StrEnum):
@@ -47,6 +48,8 @@ ESTIMAND_SUBPOPULATION: dict[EstimandType, str] = {
     EstimandType.ATC: "untreated (control) units in the target population",
     EstimandType.CATE: "units in the target population sharing the conditioning values",
     EstimandType.ITT: "all units assigned in the target population, analysed as assigned",
+    EstimandType.ATO: "the overlap population: units weighted by e(x)(1 - e(x)), i.e. those "
+    "with substantial probability of either treatment",
 }
 
 
