@@ -312,7 +312,7 @@ Deliver `Sample Ratio Mismatch Detection & Triage` without weakening design/iden
 
 ### Task 2.3: Baseline Balance Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -323,14 +323,21 @@ Deliver `Baseline Balance Diagnostics` without weakening design/identification b
 - Do not use balance p-values as a randomization-validity gate.
 
 **Task-specific verification**
-- [ ] Hand-computed balance fixture matches.
+- [x] Hand-computed balance fixture matches.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/diagnostics/balance.py` (`standardized_mean_difference`, `balance_table`, `BalanceRow`, `summarize_balance` — shared with weighted balance in Task 3.9), `src/causalimpact/experiments/balance.py` (`check_baseline_balance`).
+- SMD with pooled SD sqrt((s²_t + s²_c)/2): sample variances (ddof=1) for numeric covariates, p(1−p) for binary covariates and categorical-level indicators. Each non-control arm is compared with control. Missing values are counted per arm, never imputed. Undefined SMDs (empty arm, zero variance with different means) are reported, not hidden.
+- No balance p-values anywhere. |SMD| > 0.1 is a descriptive warning recommending pre-specified adjustment, never a blocking validity gate. Only covariates known to be pre-treatment and not affected by treatment are accepted.
+- Tests: `tests/unit/experiments/test_balance.py` (hand-computed numeric −1.0392, binary 0.6626 and categorical-level SMDs; missing handling; post-treatment refusal; multi-arm; large randomized simulation max |SMD| < 0.05). Suite: 340 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1674,11 +1681,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 2 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 3 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **9** |
+| **Total** | **65** | **51** | **14** | **10** |
