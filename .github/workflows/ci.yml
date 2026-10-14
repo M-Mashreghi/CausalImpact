@@ -1,0 +1,98 @@
+# CI quality and research gates (Task 8.4). Make the "ci-gate" job a required status check
+# in the branch-protection rules so merges are blocked when any gate fails.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.12.3"
+  OPENBLAS_NUM_THREADS: "1"
+
+jobs:
+  quality:
+    name: lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+      - run: uv sync --frozen --extra dev
+      - run: uv run ruff check src tests scripts
+      - run: uv run ruff format --check src tests scripts
+      - run: uv run mypy
+
+  tests:
+    name: unit, integration and e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+      - run: uv sync --frozen --extra dev
+      - run: uv run pytest -m "not simulation" -n auto -q
+
+  research-gates:
+    name: causal-regression research gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+      - run: uv sync --frozen --extra dev
+      - name: Simulation test suite
+        run: uv run pytest -m simulation -n auto -q
+      - name: Known-truth benchmarks and failure modes
+        run: uv run python scripts/research_gates.py --out artifacts/research_gates.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: research-gates
+          path: artifacts/research_gates.json
+
+  security:
+    name: dependency audit and lock check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: ${{ env.UV_VERSION }}
+      - name: uv.lock is up to date
+        run: uv lock --check
+      - name: requirements.lock matches uv.lock
+        run: |
+          uv export --frozen --no-dev --extra dashboard --no-emit-project -o /tmp/requirements.lock -q
+          diff <(grep -v '^#' requirements.lock) <(grep -v '^#' /tmp/requirements.lock)
+      - name: Known-vulnerability audit
+        run: uvx pip-audit -r requirements.lock --disable-pip --strict
+
+  container:
+    name: container health smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/smoke_container.sh
+
+  ci-gate:
+    name: ci-gate
+    if: always()
+    needs: [quality, tests, research-gates, security, container]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All required jobs passed
+        run: |
+          echo '${{ toJSON(needs) }}'
+          test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

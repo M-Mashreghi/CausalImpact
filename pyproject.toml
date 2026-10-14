@@ -33,6 +33,7 @@ dev = [
     "mypy>=1.11",
     "pandas-stubs>=2.2",
     "httpx2>=2.0",  # FastAPI/Starlette TestClient transport
+    "pyyaml>=6.0",  # validates CI workflow and compose files in tests
 ]
 
 [tool.hatch.build.targets.wheel]
