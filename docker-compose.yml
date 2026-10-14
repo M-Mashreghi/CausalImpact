@@ -1,0 +1,36 @@
+# Local demo stack: API on :8000, diagnostics dashboard on :8501.
+# Uses synthetic demo data generated at build time; no private data is mounted.
+services:
+  api:
+    build: .
+    image: causalimpact:local
+    ports:
+      - "8000:8000"
+    environment:
+      CAUSALIMPACT_ENV: production
+      CAUSALIMPACT_DB_URL: sqlite:////app/var/causalimpact.db
+    volumes:
+      - causalimpact-var:/app/var
+
+  dashboard:
+    image: causalimpact:local
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "8501:8501"
+    command:
+      - streamlit
+      - run
+      - /usr/local/lib/python3.12/site-packages/causalimpact/dashboard/diagnostics_app.py
+      - --server.address=0.0.0.0
+      - --server.port=8501
+      - --server.headless=true
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  causalimpact-var:

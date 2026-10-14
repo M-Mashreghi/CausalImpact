@@ -10,6 +10,7 @@ Stack traces, settings and environment values are never returned.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import uuid
 from dataclasses import dataclass, field
@@ -152,7 +153,10 @@ def create_app(state: ApiState | None = None) -> FastAPI:
 
     @app.post("/estimands", status_code=201)
     def register_estimand(estimand: Estimand) -> Estimand:
-        return state.estimands.register(estimand)
+        registered = state.estimands.register(estimand)
+        if state.registry is not None:
+            state.registry.save_estimand(registered)
+        return registered
 
     @app.get("/estimands/{estimand_id}")
     def get_estimand(estimand_id: str) -> Estimand:
@@ -162,12 +166,18 @@ def create_app(state: ApiState | None = None) -> FastAPI:
 
     @app.post("/dags", status_code=201)
     def register_dag(dag: CausalDAG) -> VersionResponse:
-        return VersionResponse(version=state.dags.register_dag(dag))
+        version = state.dags.register_dag(dag)
+        if state.registry is not None:
+            state.registry.save_dag(dag)
+        return VersionResponse(version=version)
 
     @app.post("/adjustment-sets", status_code=201)
     def register_adjustment_set(adjustment: AdjustmentSet) -> VersionResponse:
         try:
-            return VersionResponse(version=state.dags.register_adjustment_set(adjustment))
+            version = state.dags.register_adjustment_set(adjustment)
+            if state.registry is not None:
+                state.registry.save_adjustment_set(adjustment)
+            return VersionResponse(version=version)
         except KeyError as exc:
             raise HTTPException(404, str(exc).strip("'")) from None
 
@@ -178,9 +188,14 @@ def create_app(state: ApiState | None = None) -> FastAPI:
         if design.design_id in state.designs:
             raise HTTPException(409, "design id already exists")
         state.designs[design.design_id] = design
+        if state.registry is not None:
+            state.registry.save_design(design)
         return design
 
     def _design(design_id: str) -> StudyDesign:
+        if design_id not in state.designs and state.registry is not None:
+            with contextlib.suppress(KeyError):
+                state.designs[design_id] = state.registry.design(design_id)
         try:
             return state.designs[design_id]
         except KeyError:
@@ -199,6 +214,8 @@ def create_app(state: ApiState | None = None) -> FastAPI:
             readiness_check=DesignReadinessValidator(state.estimands, state.dags),
         )
         state.designs[design_id] = updated
+        if state.registry is not None:
+            state.registry.save_design(updated)
         return updated
 
     @app.post("/designs/{design_id}/runs", status_code=201)
@@ -208,10 +225,15 @@ def create_app(state: ApiState | None = None) -> FastAPI:
         spec = RunSpec.model_validate(request.model_dump(exclude={"data"}))
         result = execute(state.service, design, spec, data)
         state.runs[result.run.run_id] = result
+        if state.registry is not None:
+            state.registry.save_run(result, spec)
         return result
 
     @app.get("/runs/{run_id}")
     def get_run(run_id: str) -> AnalysisResult:
+        if run_id not in state.runs and state.registry is not None:
+            with contextlib.suppress(KeyError):
+                state.runs[run_id] = state.registry.result(run_id)
         try:
             return state.runs[run_id]
         except KeyError:

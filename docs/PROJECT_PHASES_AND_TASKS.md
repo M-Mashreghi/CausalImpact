@@ -1863,7 +1863,7 @@ Deliver `Observability & Health Checks` without weakening design/identification 
 
 ### Task 8.3: Dockerization & Demo Stack
 
-**Status:** `[ ]` Not Started  
+**Status:** `[-]` In Progress  
 **Track:** `Core`
 
 **Purpose**  
@@ -1882,6 +1882,11 @@ Deliver `Dockerization & Demo Stack` without weakening design/identification bou
 - [ ] Result provenance/configuration is persisted where applicable.
 - [ ] No hidden estimand/assumption change is introduced.
 - [ ] Documentation and `TASKS.md` are synchronized.
+
+**Progress note**
+- Implemented: `Dockerfile` (python:3.12-slim, hash-locked `requirements.lock` exported from `uv.lock`, non-root user, HEALTHCHECK on `/health`, synthetic demo data generated at build), `docker-compose.yml` (API :8000 with a persistent SQLite volume, dashboard :8501 gated on API health), `.dockerignore` (no data, `.env` or databases), `scripts/make_demo_data.py`, `scripts/smoke_container.sh`, and `causalimpact.api.server:build_app` (settings, logging, persistent registry; designs and runs survive restarts).
+- Verified locally: `tests/integration/test_deployment.py` (production app health/readiness and persistence across restarts, demo data script, Dockerfile/compose invariants, requirements.lock matches uv.lock).
+- Pending: the container health smoke test needs Docker, which is not installed on the build machine; it runs in CI (Task 8.4) and this task is completed once that job passes.
 
 ---
 
