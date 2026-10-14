@@ -1863,7 +1863,7 @@ Deliver `Observability & Health Checks` without weakening design/identification 
 
 ### Task 8.3: Dockerization & Demo Stack
 
-**Status:** `[-]` In Progress  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1874,25 +1874,26 @@ Deliver `Dockerization & Demo Stack` without weakening design/identification bou
 - Use fixture/demo datasets, never private data.
 
 **Task-specific verification**
-- [ ] Container health smoke test.
+- [x] Container health smoke test.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
 
-**Progress note**
-- Implemented: `Dockerfile` (python:3.12-slim, hash-locked `requirements.lock` exported from `uv.lock`, non-root user, HEALTHCHECK on `/health`, synthetic demo data generated at build), `docker-compose.yml` (API :8000 with a persistent SQLite volume, dashboard :8501 gated on API health), `.dockerignore` (no data, `.env` or databases), `scripts/make_demo_data.py`, `scripts/smoke_container.sh`, and `causalimpact.api.server:build_app` (settings, logging, persistent registry; designs and runs survive restarts).
-- Verified locally: `tests/integration/test_deployment.py` (production app health/readiness and persistence across restarts, demo data script, Dockerfile/compose invariants, requirements.lock matches uv.lock).
-- Pending: the container health smoke test needs Docker, which is not installed on the build machine; it runs in CI (Task 8.4) and this task is completed once that job passes.
+**Completion record**
+- Implementation: `Dockerfile` (python:3.12-slim, hash-locked `requirements.lock` exported from `uv.lock`, non-root user, HEALTHCHECK on `/health`, synthetic demo data generated at build), `docker-compose.yml` (API :8000 with a persistent SQLite volume, dashboard :8501 gated on API health), `.dockerignore` (no data, `.env` or databases), `scripts/make_demo_data.py`, `scripts/smoke_container.sh`, and `causalimpact.api.server:build_app` (settings, logging, persistent registry; designs and runs survive restarts).
+- Local tests: `tests/integration/test_deployment.py` (production app health/readiness and persistence across restarts, demo data script, Dockerfile/compose invariants, `requirements.lock` matches `uv.lock`).
+- Container health smoke test: Docker is not installed on the build machine, so it ran in CI — GitHub Actions run 38630394434 (commit 4ad8de9), job "container health smoke test": build, compose up, `/health`, `/ready`, dashboard health — passed.
+- Assumption/estimand changes: none.
 
 ---
 
 ### Task 8.4: GitHub Actions CI & Research Gates
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1903,14 +1904,20 @@ Deliver `GitHub Actions CI & Research Gates` without weakening design/identifica
 - Block merges on causal-regression test failures.
 
 **Task-specific verification**
-- [ ] Workflow syntax/quality gates validated.
+- [x] Workflow syntax/quality gates validated.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `.github/workflows/ci.yml` with jobs `quality` (ruff check, ruff format --check, mypy strict), `tests` (non-simulation suite, parallel), `research-gates` (simulation suite plus `scripts/research_gates.py`: known-truth bias and coverage gates for difference in means, AIPW and 2x2 DiD, failure-mode detection and control false-alarm gates; JSON artifact uploaded), `security` (`uv lock --check`, `requirements.lock` ↔ `uv.lock` diff, `pip-audit --strict`), `container` (Docker smoke test), and `ci-gate`, which fails if any job failed, was cancelled or skipped. Read-only permissions, version-pinned actions, no secrets (mandatory CI has no external credentials). PyYAML added as a dev dependency to validate the workflow and compose files.
+- Verification: `tests/integration/test_ci_workflow.py` (workflow parses; required jobs and gates present; gate job semantics; pinned actions; no secrets; compose parses; research-gates script passes). First GitHub Actions run 38630394434 on commit 4ad8de9: all six jobs succeeded.
+- Blocking merges requires marking `ci-gate` as a required status check in the repository's branch-protection settings (a repository setting, documented in the workflow header).
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1942,12 +1949,12 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 12 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
-| 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 2 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 9 |
+| 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 8 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
-| 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
-| 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
-| 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **48** |
+| 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 7 |
+| 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 5 |
+| 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 4 |
+| **Total** | **65** | **51** | **14** | **50** |
