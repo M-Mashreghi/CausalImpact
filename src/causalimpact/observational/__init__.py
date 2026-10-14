@@ -5,5 +5,21 @@ from causalimpact.observational.eligibility import (
     VariableDecision,
     screen_adjustment_candidates,
 )
+from causalimpact.observational.propensity import (
+    ConvergenceError,
+    LogisticPropensity,
+    PropensityModel,
+    PropensityScores,
+    estimate_propensity,
+)
 
-__all__ = ["CovariateScreen", "VariableDecision", "screen_adjustment_candidates"]
+__all__ = [
+    "ConvergenceError",
+    "CovariateScreen",
+    "LogisticPropensity",
+    "PropensityModel",
+    "PropensityScores",
+    "VariableDecision",
+    "estimate_propensity",
+    "screen_adjustment_candidates",
+]

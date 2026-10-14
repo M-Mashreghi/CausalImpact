@@ -637,7 +637,7 @@ Deliver `Observational Covariate Temporal Eligibility` without weakening design/
 
 ### Task 3.2: Propensity Score Estimation
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -648,14 +648,21 @@ Deliver `Propensity Score Estimation` without weakening design/identification bo
 - Persist predicted propensity and nuisance-model config.
 
 **Task-specific verification**
-- [ ] Probabilities bounded and reproducible.
+- [x] Probabilities bounded and reproducible.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/observational/propensity.py` (`PropensityModel` / `FittedPropensityModel` protocols, `LogisticPropensity`, `FittedLogistic`, `estimate_propensity`, `PropensityScores`, `ConvergenceError`); `covariate_matrix` moved to `src/causalimpact/estimators/design_matrix.py` so experiments and observational estimators share one eligibility-enforcing design builder.
+- Baseline model: logistic regression by Newton–Raphson on standardised covariates, optional L2 penalty on slopes (never the intercept); no sklearn dependency. Scores are not clipped; divergence (complete separation, i.e. a positivity failure) raises `ConvergenceError` instead of returning 0/1 scores.
+- Persistence: `PropensityScores` carries unit ids, treatment, scores (`to_frame()`), and a nuisance config (model, penalty, tolerances, covariates, design columns, coefficients on the original scale, iterations) with a content fingerprint.
+- Tests: `tests/unit/observational/test_propensity.py` (bounded scores; coefficients recovered on a known DGP; scores equal an independent BFGS maximum-likelihood fit; identical across runs and row orders; penalty changes fingerprint and shrinks; separation raises; penalty resolves it; invalid inputs; post-treatment covariates refused). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1731,11 +1738,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 10 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 11 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **17** |
+| **Total** | **65** | **51** | **14** | **18** |
