@@ -37,7 +37,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [ ] **Task 3.10** — Observational Falsification / Negative-Control Hooks (`Advanced`)
 
 ## Phase 4 — Difference-in-Differences & Policy Evaluation
-- [ ] **Task 4.1** — Panel Data Contract & Treatment Timing Model (`Core`)
+- [x] **Task 4.1** — Panel Data Contract & Treatment Timing Model (`Core`)
 - [ ] **Task 4.2** — Two-Period Difference-in-Differences (`Core`)
 - [ ] **Task 4.3** — Multi-Period DiD Baseline (`Core`)
 - [ ] **Task 4.4** — Classical Event-Study Diagnostic (`Core`)

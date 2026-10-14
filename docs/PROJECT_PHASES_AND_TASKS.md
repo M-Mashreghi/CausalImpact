@@ -905,7 +905,7 @@ Deliver `Observational Falsification / Negative-Control Hooks` without weakening
 
 ### Task 4.1: Panel Data Contract & Treatment Timing Model
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -916,14 +916,22 @@ Deliver `Panel Data Contract & Treatment Timing Model` without weakening design/
 - Validate treatment timing consistency.
 
 **Task-specific verification**
-- [ ] Malformed timing fixtures fail.
+- [x] Malformed timing fixtures fail.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/contract.py` (`PanelSpec`, `PanelTiming`, `validate_panel`, `annotate_timing`).
+- Unit–period schema with integer periods and a per-unit `treatment_start` (missing = never treated); optional 0/1 `treated` indicator, cluster and covariate columns. Absorbing treatment only (staggered adoption); non-absorbing patterns are refused.
+- Blocking: missing columns, missing unit/period, non-integer periods or starts, duplicate (unit, period) rows, start varying within a unit, indicator disagreeing with period ≥ start, invalid indicator values, treatment switching off. Warnings: always-treated units (no pre-period), starts after the data window (not-yet-treated throughout), unbalanced panel, missing outcomes.
+- `PanelTiming` summarises periods, cohort sizes, never/always-treated counts, balance and whether adoption is staggered; `annotate_timing` adds `ever_treated`, `never_treated`, `post`, `not_yet_treated` and `rel_time`.
+- Tests: `tests/unit/panel/test_contract.py` (valid staggered panel; annotation; 9 malformed fixtures block; restrictive-timing warnings; unbalanced and missing-outcome warnings; indicator optional). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1781,9 +1789,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 1 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **24** |
+| **Total** | **65** | **51** | **14** | **25** |
