@@ -12,7 +12,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 
 ## Phase 2 — Randomized Experiments & Product Experimentation
 - [x] **Task 2.1** — Experiment Assignment & Logging Integrity (`Core`)
-- [ ] **Task 2.2** — Sample Ratio Mismatch Detection & Triage (`Core`)
+- [x] **Task 2.2** — Sample Ratio Mismatch Detection & Triage (`Core`)
 - [ ] **Task 2.3** — Baseline Balance Diagnostics (`Core`)
 - [ ] **Task 2.4** — Difference-in-Means & Difference-in-Proportions (`Core`)
 - [ ] **Task 2.5** — Regression-Adjusted Experiment Estimator (`Core`)

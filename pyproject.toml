@@ -55,3 +55,8 @@ strict = true
 mypy_path = "src"
 packages = ["causalimpact"]
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# scipy ships no inline type information; its call sites are covered by tests.
+module = ["scipy", "scipy.*"]
+ignore_missing_imports = true
