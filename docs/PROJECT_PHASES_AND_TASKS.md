@@ -968,7 +968,7 @@ Deliver `Two-Period Difference-in-Differences` without weakening design/identifi
 
 ### Task 4.3: Multi-Period DiD Baseline
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -979,14 +979,21 @@ Deliver `Multi-Period DiD Baseline` without weakening design/identification boun
 - Make comparison-group rules explicit.
 
 **Task-specific verification**
-- [ ] Balanced panel fixture matches reference.
+- [x] Balanced panel fixture matches reference.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/multi_period.py` (`SingleCohortDiD`, `ComparisonGroup`).
+- Scope: one adoption cohort, balanced panel without gaps. The ATT averaged over post periods (equal weight per period) is computed as the difference in unit-level (post mean − pre mean) between treated and comparison units, which equals the static TWFE coefficient in this setting; unit-clustered Welch inference. Staggered adoption is refused with a pointer to the group-time estimator (Task 4.7); always-treated units and unbalanced panels are refused.
+- Explicit comparison rule: `never_treated` (units starting after the window are excluded and counted) or `not_yet_treated` (they are included). Pre/post period counts and the rule are recorded in `details`.
+- Tests: `tests/unit/panel/test_multi_period.py` (equals an independent two-way-demeaned TWFE reference to 1e-10; recovers the mean of dynamic effects (1, 2, 3); comparison rule changes the control set as documented; staggered and unbalanced refused; simulation: unbiased, coverage in [0.91, 0.98]). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1796,9 +1803,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 2 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 3 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **26** |
+| **Total** | **65** | **51** | **14** | **27** |

@@ -39,7 +39,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 ## Phase 4 — Difference-in-Differences & Policy Evaluation
 - [x] **Task 4.1** — Panel Data Contract & Treatment Timing Model (`Core`)
 - [x] **Task 4.2** — Two-Period Difference-in-Differences (`Core`)
-- [ ] **Task 4.3** — Multi-Period DiD Baseline (`Core`)
+- [x] **Task 4.3** — Multi-Period DiD Baseline (`Core`)
 - [ ] **Task 4.4** — Classical Event-Study Diagnostic (`Core`)
 - [ ] **Task 4.5** — Pre-Trend Diagnostics (`Core`)
 - [ ] **Task 4.6** — Cluster-Robust Inference (`Core`)
