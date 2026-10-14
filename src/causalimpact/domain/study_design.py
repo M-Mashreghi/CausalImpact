@@ -24,6 +24,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from causalimpact.domain.assumptions import Assumption
 from causalimpact.domain.errors import DesignNotReadyError, IllegalTransitionError
+from causalimpact.domain.fingerprint import content_hash
 from causalimpact.domain.ids import DesignId, new_design_id
 from causalimpact.domain.types import AwareDatetime, NonBlankStr, utc_now
 
@@ -62,6 +63,12 @@ ANALYZABLE_STATUSES: frozenset[DesignStatus] = frozenset(
         DesignStatus.REVIEWED,
         DesignStatus.REPORTED,
     }
+)
+
+
+# Identity and lifecycle fields: not revisable and not part of the content hash.
+DESIGN_LIFECYCLE_FIELDS = frozenset(
+    {"design_id", "version", "status", "status_history", "created_at"}
 )
 
 
@@ -178,8 +185,7 @@ class StudyDesign(BaseModel):
         """
         if self.status is not DesignStatus.DRAFT:
             raise IllegalTransitionError(f"only Draft designs can be revised, not {self.status}")
-        protected = {"design_id", "version", "status", "status_history", "created_at"}
-        if bad := protected & changes.keys():
+        if bad := DESIGN_LIFECYCLE_FIELDS & changes.keys():
             raise IllegalTransitionError(f"fields are not revisable: {sorted(bad)}")
         data = self.model_dump()
         data.update(changes)
@@ -194,6 +200,11 @@ class StudyDesign(BaseModel):
             ),
         )
         return StudyDesign.model_validate(data)
+
+    @property
+    def content_hash(self) -> str:
+        """Fingerprint of what the design says, excluding identity and lifecycle fields."""
+        return content_hash(self.model_dump(mode="json", exclude=set(DESIGN_LIFECYCLE_FIELDS)))
 
     @property
     def is_analyzable(self) -> bool:

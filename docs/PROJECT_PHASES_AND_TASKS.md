@@ -214,7 +214,7 @@ Deliver `Assumption Registry & Design Validation` without weakening design/ident
 
 ### Task 1.7: Dataset Versioning, Seeds & Reproducible Run Identity
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -225,15 +225,23 @@ Deliver `Dataset Versioning, Seeds & Reproducible Run Identity` without weakenin
 - Derive stable run identity from dataset/design/config where appropriate.
 
 **Task-specific verification**
-- [ ] Same inputs reproduce id/result seeds.
-- [ ] Changed config changes run fingerprint.
+- [x] Same inputs reproduce id/result seeds.
+- [x] Changed config changes run fingerprint.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/domain/fingerprint.py` (`canonical_json`, `content_hash`, `derive_seed`), `src/causalimpact/ingestion/dataset_version.py` (`dataset_version`, `DatasetVersion`), `StudyDesign.content_hash`, and on `AnalysisRun` the new required `design_content_hash` plus `fingerprint` and `derived_seed(purpose)`.
+- Dataset hash: SHA-256 over row count, column names, dtypes and pandas value hashes. Column order and index are ignored; row order is kept because seeded steps depend on it. Verified stable across processes.
+- Run identity: `run_id` identifies an execution; `fingerprint` identifies the specification (design content, dataset version, estimand, estimator, DAG/adjustment set, learners, config, seed, confidence level, code version) and excludes lifecycle fields. Design content hash excludes id, version, status, history and timestamp.
+- Seeds: `derive_seed(root, purpose)` depends only on the root seed and purpose label, so adding a random step does not shift existing streams.
+- Tests: `tests/unit/test_reproducibility.py` (same inputs → same hash/fingerprint/seeds; each config, data, design or code-version change → new fingerprint; lifecycle and JSON round-trip keep the fingerprint). Suite: 295 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1651,7 +1659,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 6 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 0 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
@@ -1659,4 +1667,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **6** |
+| **Total** | **65** | **51** | **14** | **7** |

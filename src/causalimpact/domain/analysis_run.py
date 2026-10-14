@@ -4,7 +4,11 @@ A run pins the exact design version it was created from, so later design revisio
 silently change what a historical run meant. Runs are never overwritten: a run affected by
 a bug is moved to Invalidated with a reason (RUNBOOK.md, "Result invalidation").
 
-Stable, content-derived run fingerprints are added by Task 1.7.
+``run_id`` identifies one *execution*; ``fingerprint`` identifies the *specification*.
+Two runs with identical design content, dataset, estimand, estimator, DAG/adjustment set,
+learners, config, seed, confidence level and code version share a fingerprint, and any
+change to those inputs changes it. Lifecycle fields (id, status, timestamps, reasons) are
+excluded from the fingerprint.
 """
 
 from __future__ import annotations
@@ -15,6 +19,7 @@ from typing import Any, Self
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from causalimpact.domain.errors import DesignNotReadyError, IllegalTransitionError
+from causalimpact.domain.fingerprint import content_hash, derive_seed
 from causalimpact.domain.ids import DesignId, RunId, new_run_id
 from causalimpact.domain.study_design import StudyDesign
 from causalimpact.domain.types import AwareDatetime, NonBlankStr, utc_now
@@ -37,6 +42,12 @@ ALLOWED_RUN_TRANSITIONS: dict[RunStatus, frozenset[RunStatus]] = {
 }
 
 
+# Execution/lifecycle fields excluded from the specification fingerprint.
+RUN_FINGERPRINT_EXCLUDES = frozenset(
+    {"run_id", "status", "created_at", "failure_reason", "invalidation_reason"}
+)
+
+
 class AnalysisRun(BaseModel):
     """Immutable record of a single analysis specification and its execution state."""
 
@@ -45,6 +56,7 @@ class AnalysisRun(BaseModel):
     run_id: RunId = Field(default_factory=new_run_id)
     design_id: DesignId
     design_version: int = Field(ge=1)
+    design_content_hash: NonBlankStr
     status: RunStatus = RunStatus.PENDING
     created_at: AwareDatetime = Field(default_factory=utc_now)
 
@@ -97,7 +109,22 @@ class AnalysisRun(BaseModel):
             value = spec.setdefault(key, getattr(design, key))
             if value != getattr(design, key):
                 raise DesignNotReadyError(f"run {key} {value!r} does not match the design")
-        return cls(design_id=design.design_id, design_version=design.version, **spec)
+        return cls(
+            design_id=design.design_id,
+            design_version=design.version,
+            design_content_hash=design.content_hash,
+            **spec,
+        )
+
+    @property
+    def fingerprint(self) -> str:
+        """Stable identity of this run's specification (``sha256:<hex>``)."""
+        spec = self.model_dump(mode="json", exclude=set(RUN_FINGERPRINT_EXCLUDES))
+        return content_hash(spec)
+
+    def derived_seed(self, purpose: str) -> int:
+        """Deterministic child seed for one random step of this run."""
+        return derive_seed(self.seed, purpose)
 
     def transition(self, to: RunStatus, *, reason: str | None = None) -> AnalysisRun:
         if to not in ALLOWED_RUN_TRANSITIONS[self.status]:

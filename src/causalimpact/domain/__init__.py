@@ -1,6 +1,11 @@
 """Canonical domain models: StudyDesign, AnalysisRun, estimands and assumptions."""
 
-from causalimpact.domain.analysis_run import ALLOWED_RUN_TRANSITIONS, AnalysisRun, RunStatus
+from causalimpact.domain.analysis_run import (
+    ALLOWED_RUN_TRANSITIONS,
+    RUN_FINGERPRINT_EXCLUDES,
+    AnalysisRun,
+    RunStatus,
+)
 from causalimpact.domain.assumptions import Assumption, AssumptionStatus, Testability
 from causalimpact.domain.errors import DesignNotReadyError, DomainError, IllegalTransitionError
 from causalimpact.domain.estimands import (
@@ -14,10 +19,12 @@ from causalimpact.domain.estimands import (
     TreatmentBasis,
     check_estimate_targets,
 )
+from causalimpact.domain.fingerprint import canonical_json, content_hash, derive_seed
 from causalimpact.domain.ids import DesignId, RunId, new_design_id, new_run_id
 from causalimpact.domain.study_design import (
     ALLOWED_DESIGN_TRANSITIONS,
     ANALYZABLE_STATUSES,
+    DESIGN_LIFECYCLE_FIELDS,
     DesignFamily,
     DesignStatus,
     ReadinessCheck,
@@ -45,7 +52,9 @@ __all__ = [
     "ALLOWED_DESIGN_TRANSITIONS",
     "ALLOWED_RUN_TRANSITIONS",
     "ANALYZABLE_STATUSES",
+    "DESIGN_LIFECYCLE_FIELDS",
     "ESTIMAND_SUBPOPULATION",
+    "RUN_FINGERPRINT_EXCLUDES",
     "AnalysisRun",
     "Assumption",
     "AssumptionStatus",
@@ -80,8 +89,11 @@ __all__ = [
     "TreatmentKind",
     "TreatmentSpec",
     "TriState",
+    "canonical_json",
     "check_estimate_targets",
     "classify_covariate",
+    "content_hash",
+    "derive_seed",
     "new_design_id",
     "new_run_id",
     "refuse_without_validator",

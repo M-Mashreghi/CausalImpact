@@ -71,6 +71,13 @@ Must record enough metadata to reproduce the result:
   `Estimator` protocol and declare `supported_estimands`; `run_estimator` refuses
   unsupported estimands and outputs that declare a different estimand.
 
+## Reproducible identity
+
+- Datasets: `causalimpact.ingestion.dataset_version` (content hash; row order significant).
+- Designs: `StudyDesign.content_hash` (content only, not lifecycle).
+- Runs: `AnalysisRun.fingerprint` identifies the specification; `run_id` one execution.
+- Seeds: `derive_seed(root_seed, purpose)` gives independent, order-free child seeds.
+
 ## DAGs (`causalimpact.dags`)
 
 - `CausalDAG` and `AdjustmentSet` versions are content hashes, so an AnalysisRun's stored
