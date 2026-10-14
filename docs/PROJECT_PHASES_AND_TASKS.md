@@ -1561,7 +1561,7 @@ Deliver `Estimator / Specification Comparison` without weakening design/identifi
 
 ### Task 6.6: Assumption-Aware Report Generator
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1572,14 +1572,21 @@ Deliver `Assumption-Aware Report Generator` without weakening design/identificat
 - Include failed/unverifiable assumptions and interpretation status.
 
 **Task-specific verification**
-- [ ] Report fixture contains required sections.
+- [x] Report fixture contains required sections.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/reporting/report.py` (`build_report`, `render_markdown`, `Report`, `Section`, `REQUIRED_SECTIONS`, `METHOD_REFERENCES`).
+- Sections (always present, in this order): Interpretation status, Design (question, design family, treatment, outcome, population, estimand with averaging population and scale, DAG and adjustment-set versions), Result (estimate with units, interval, SE, p-value, inference method, estimator, sample sizes; or an explicit "no estimate" statement), Diagnostics (every diagnostic with required/optional and all findings, plus weight and overlap findings attached to estimates), Robustness (specification grid and trimming results when supplied; "not run" stated otherwise, including placebo and unmeasured-confounding sensitivity), Assumptions (testability, status, justification), Limitations (untestable assumptions, significance ≠ causality), Reproducibility (run id and status, fingerprint, design version and hash, dataset version, seed, confidence level, code version), Method references (from the estimator and diagnostics used).
+- The interpretation label is copied from the analysis service and never upgraded.
+- Tests: `tests/integration/test_report.py` (supported RCT report has every section and provenance; blocked SRM report says "not supported", has no estimate and lists the blocking finding; observational report renders specification and trimming artifacts and untestable assumptions). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1881,9 +1888,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 11 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 12 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **39** |
+| **Total** | **65** | **51** | **14** | **40** |
