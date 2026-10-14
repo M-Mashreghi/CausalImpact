@@ -62,7 +62,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 6.1** — Core Causal Analysis Service (`Core`)
 - [x] **Task 6.2** — FastAPI Study & Analysis API (`Core`)
 - [x] **Task 6.3** — Streamlit Study Designer (`Core`)
-- [ ] **Task 6.4** — Diagnostics Dashboard (`Core`)
+- [x] **Task 6.4** — Diagnostics Dashboard (`Core`)
 - [ ] **Task 6.5** — Estimator / Specification Comparison (`Core`)
 - [ ] **Task 6.6** — Assumption-Aware Report Generator (`Core`)
 - [ ] **Task 6.7** — Analysis Registry, Re-Run & Reproducibility Bundle (`Core`)

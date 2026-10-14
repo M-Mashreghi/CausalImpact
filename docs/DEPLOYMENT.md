@@ -11,6 +11,7 @@ uv run ruff check src tests
 uv run ruff format --check src tests
 uv run mypy
 uv run streamlit run src/causalimpact/dashboard/designer_app.py   # study designer
+uv run streamlit run src/causalimpact/dashboard/diagnostics_app.py  # diagnostics dashboard
 uv run uvicorn --factory causalimpact.api:create_app             # HTTP API
 ```
 
