@@ -20,6 +20,11 @@ from causalimpact.simulation.dgp import (
     SimulationConfig,
     simulate,
 )
+from causalimpact.simulation.failure_modes import (
+    FailureModeReport,
+    ScenarioResult,
+    run_failure_mode_suite,
+)
 from causalimpact.simulation.stress import StressPoint, overlap_sweep
 
 __all__ = [
@@ -27,9 +32,11 @@ __all__ = [
     "BenchmarkResult",
     "CoverageGate",
     "CoverageSummary",
+    "FailureModeReport",
     "ObservationalConfig",
     "PanelConfig",
     "RCTConfig",
+    "ScenarioResult",
     "SimulatedDataset",
     "SimulationConfig",
     "StressPoint",
@@ -38,5 +45,6 @@ __all__ = [
     "coverage_summary",
     "overlap_sweep",
     "run_benchmark",
+    "run_failure_mode_suite",
     "simulate",
 ]

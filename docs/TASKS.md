@@ -73,7 +73,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 7.3** — Confidence Interval Coverage Benchmark (`Core`)
 - [x] **Task 7.4** — Poor-Overlap & Extreme-Weight Stress Tests (`Core`)
 - [ ] **Task 7.5** — Nuisance Misspecification & Cross-Fitting Tests (`Advanced`)
-- [ ] **Task 7.6** — DiD / Experiment Failure-Mode Simulation Suite (`Core`)
+- [x] **Task 7.6** — DiD / Experiment Failure-Mode Simulation Suite (`Core`)
 
 ## Phase 8 — Hardening, CI/CD & Operations
 - [ ] **Task 8.1** — End-to-End Regression Suite (`Core`)

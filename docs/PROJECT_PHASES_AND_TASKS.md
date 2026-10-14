@@ -1770,7 +1770,7 @@ Deliver `Nuisance Misspecification & Cross-Fitting Tests` without weakening desi
 
 ### Task 7.6: DiD / Experiment Failure-Mode Simulation Suite
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1781,14 +1781,21 @@ Deliver `DiD / Experiment Failure-Mode Simulation Suite` without weakening desig
 - Generate regression artifacts for CI.
 
 **Task-specific verification**
-- [ ] Failure modes are detected/labeled.
+- [x] Failure modes are detected/labeled.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/simulation/failure_modes.py` (`run_failure_mode_suite`, `FailureModeReport` with `write()` for a JSON CI artifact, `ScenarioResult`).
+- Scenarios (each with a clean control): SRM (realised share 0.46 vs 0.5) → `check_srm`; differential attrition (10% treated-only loss vs equal 5%) → `check_attrition`; pre-trend violation (0.3/period drift vs parallel) → event study + `check_pre_trends`; staggered heterogeneous adoption (two cohorts, 1× vs 3× effects vs single cohort) → TWFE event-study staggered flag. Detection rates are computed over seeded replicates.
+- Repeated peeking is a demonstration only: a null RCT monitored at 10 fixed-horizon looks shows the inflated false-positive rate; automatic detection belongs to the deferred Advanced Task 2.12 and the scenario is labelled `detector="not implemented (Task 2.12)"` rather than claimed.
+- Tests: `tests/simulation/test_failure_modes.py` (all four failure modes detected ≥ 90%; controls alarm ≤ 25%; peeking false-positive rate > 0.12 and honestly labelled; JSON artifact round-trips). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1917,7 +1924,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 11 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 12 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
@@ -1925,4 +1932,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **45** |
+| **Total** | **65** | **51** | **14** | **46** |
