@@ -15,7 +15,7 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, JsonValue
 
 from causalimpact.diagnostics.base import DiagnosticResult, Finding, FindingSeverity, examples
 from causalimpact.domain.variables import CovariateDType, CovariateSpec
@@ -254,3 +254,106 @@ def weighted_balance_rows(
             kind: Kind = "binary" if cov.dtype is CovariateDType.BINARY else "numeric"
             rows.append(_weighted_row(cov.name, None, comparison, column, t, w, kind))
     return rows
+
+
+def weighted_variance_ratio(
+    x: np.ndarray, treated: np.ndarray, weights: np.ndarray
+) -> float | None:
+    """Weighted variance ratio treated / control, sum w (x - m)^2 / sum w per arm."""
+    present = ~np.isnan(x)
+    t, c = present & treated, present & ~treated
+
+    def wvar(mask: np.ndarray) -> float | None:
+        w = weights[mask]
+        if w.sum() <= 0:
+            return None
+        m = float(np.dot(w, x[mask]) / w.sum())
+        return float(np.dot(w, (x[mask] - m) ** 2) / w.sum())
+
+    v_t, v_c = wvar(t), wvar(c)
+    if v_t is None or v_c is None or v_c == 0.0:
+        return None
+    return v_t / v_c
+
+
+def balance_comparison(
+    data: pd.DataFrame,
+    treated: np.ndarray,
+    covariates: tuple[CovariateSpec, ...],
+    adjustments: dict[str, np.ndarray],
+    *,
+    smd_threshold: float = DEFAULT_SMD_THRESHOLD,
+    variance_ratio_bounds: tuple[float, float] = (0.5, 2.0),
+) -> DiagnosticResult:
+    """Love-plot-ready balance before and after one or more adjustments.
+
+    ``adjustments`` maps a label (e.g. ``"ipw"``, ``"matched"``) to unit weights aligned
+    with ``data``; an ``"unadjusted"`` entry with unit weights is always added first.
+    """
+    t = np.asarray(treated, dtype=bool)
+    if "unadjusted" in adjustments:
+        raise ValueError("'unadjusted' is reserved for the unweighted comparison")
+    all_weights = {"unadjusted": np.ones(len(data))} | dict(adjustments)
+    love: list[JsonValue] = []
+    summary: dict[str, JsonValue] = {}
+    findings: list[Finding] = []
+    lo, hi = variance_ratio_bounds
+    for label, weights in all_weights.items():
+        rows = weighted_balance_rows(data, t, weights, covariates, label)
+        w = np.asarray(weights, dtype=float)
+        above = [r for r in rows if r.smd is not None and abs(r.smd) > smd_threshold]
+        bad_vr: list[str] = []
+        for r in rows:
+            ratio = None
+            if r.level is None:
+                cov = next(c for c in covariates if c.name == r.covariate)
+                if cov.dtype is CovariateDType.NUMERIC:
+                    ratio = weighted_variance_ratio(data[cov.name].to_numpy(dtype=float), t, w)
+                    if ratio is not None and not lo <= ratio <= hi:
+                        bad_vr.append(r.covariate)
+            love.append(
+                {
+                    "adjustment": label,
+                    "covariate": r.covariate,
+                    "level": r.level,
+                    "smd": r.smd,
+                    "abs_smd": None if r.smd is None else abs(r.smd),
+                    "variance_ratio": ratio,
+                }
+            )
+        smds = [abs(r.smd) for r in rows if r.smd is not None]
+        summary[label] = {
+            "max_abs_smd": max(smds) if smds else None,
+            "n_above_threshold": len(above),
+            "n_variance_ratio_outside": len(bad_vr),
+        }
+        if label != "unadjusted" and above:
+            findings.append(
+                Finding(
+                    code="residual_imbalance",
+                    severity=FindingSeverity.WARNING,
+                    message=f"after '{label}', {len(above)} covariate rows still have "
+                    f"|SMD| > {smd_threshold:g}",
+                    count=len(above),
+                    examples=examples(
+                        f"{r.covariate}{'=' + r.level if r.level else ''}" for r in above
+                    ),
+                )
+            )
+        if label != "unadjusted" and bad_vr:
+            findings.append(
+                Finding(
+                    code="variance_ratio_out_of_bounds",
+                    severity=FindingSeverity.WARNING,
+                    message=f"after '{label}', variance ratios outside [{lo:g}, {hi:g}]",
+                    count=len(bad_vr),
+                    examples=examples(bad_vr),
+                )
+            )
+    metrics: dict[str, JsonValue] = {
+        "smd_threshold": smd_threshold,
+        "variance_ratio_bounds": [lo, hi],
+        "summary": summary,
+        "love_plot": love,
+    }
+    return DiagnosticResult(name="covariate_balance", findings=tuple(findings), metrics=metrics)

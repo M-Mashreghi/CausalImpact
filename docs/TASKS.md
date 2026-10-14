@@ -33,7 +33,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 3.6** — Outcome Regression Adjustment (`Core`)
 - [x] **Task 3.7** — Doubly Robust AIPW Estimator (`Core`)
 - [ ] **Task 3.8** — Cross-Fitting & Double ML Engine (`Advanced`)
-- [ ] **Task 3.9** — Covariate Balance & Weighted Diagnostics (`Core`)
+- [x] **Task 3.9** — Covariate Balance & Weighted Diagnostics (`Core`)
 - [ ] **Task 3.10** — Observational Falsification / Negative-Control Hooks (`Advanced`)
 
 ## Phase 4 — Difference-in-Differences & Policy Evaluation

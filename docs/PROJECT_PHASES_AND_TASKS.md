@@ -849,7 +849,7 @@ Deliver `Cross-Fitting & Double ML Engine` without weakening design/identificati
 
 ### Task 3.9: Covariate Balance & Weighted Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -860,14 +860,20 @@ Deliver `Covariate Balance & Weighted Diagnostics` without weakening design/iden
 - Create Love-plot-ready data and balance thresholds.
 
 **Task-specific verification**
-- [ ] Hand-computed SMD fixtures match.
+- [x] Hand-computed SMD fixtures match.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: in `src/causalimpact/diagnostics/balance.py`: `weighted_balance_rows` (from Task 3.4), new `weighted_variance_ratio` and `balance_comparison`.
+- Weighted SMD uses weighted arm means with the denominator from the unweighted arm variances, so before/after changes reflect mean shifts only. `balance_comparison` always includes an `unadjusted` baseline plus any labelled weightings (IPW, matching weights, …) and returns Love-plot-ready rows (adjustment, covariate, level, SMD, |SMD|, variance ratio for numeric covariates), per-adjustment summaries, and warnings for residual |SMD| > threshold (default 0.1) or variance ratios outside [0.5, 2] after adjustment.
+- Tests: `tests/unit/observational/test_weighted_balance.py` (hand-computed weighted numeric SMD −1.1547, weighted binary SMD, weighted variance ratio 0.75 / 2.75; unit weights reproduce the unweighted SMD; invalid weights rejected; on confounded data max |SMD| goes from > 0.3 unadjusted to < 0.1 after both IPW and matching, with complete Love-plot data; residual imbalance flagged; reserved label). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1773,11 +1779,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 16 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **23** |
+| **Total** | **65** | **51** | **14** | **24** |
