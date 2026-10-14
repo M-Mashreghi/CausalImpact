@@ -1686,7 +1686,7 @@ Deliver `Estimator Bias / RMSE Benchmark Harness` without weakening design/ident
 
 ### Task 7.3: Confidence Interval Coverage Benchmark
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1697,14 +1697,20 @@ Deliver `Confidence Interval Coverage Benchmark` without weakening design/identi
 - Gate severe coverage regressions.
 
 **Task-specific verification**
-- [ ] Reference normal-means example near nominal coverage.
+- [x] Reference normal-means example near nominal coverage.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/simulation/coverage.py` (`coverage_summary`, `CoverageSummary`, `CoverageGate`, `check_coverage`), built on the per-replicate CIs from the Task 7.2 harness.
+- Coverage is computed against each replicate's own truth, with Monte Carlo SE, mean interval width and failure rate. The gate blocks severe under-coverage (below nominal − 0.05 by default), drops of more than 0.03 versus a stored baseline, and failure rates above 5%, so refusals cannot hide poor coverage. Coverage with zero successful replicates is undefined and raises.
+- Tests: `tests/simulation/test_coverage.py` (difference-in-means normal-means reference within 3 MC SE of 0.95 and passes the gate; unit-level SEs on cluster-randomised data cover < 0.8 and are blocked; baseline regression blocked; failure-rate gate; 2x2 DiD on a simulated panel passes). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1905,7 +1911,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 9 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 10 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
@@ -1913,4 +1919,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **43** |
+| **Total** | **65** | **51** | **14** | **44** |

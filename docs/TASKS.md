@@ -70,7 +70,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 ## Phase 7 — Simulation Benchmarking & Research Validation
 - [x] **Task 7.1** — Synthetic Data Generator with Known Effects (`Core`)
 - [x] **Task 7.2** — Estimator Bias / RMSE Benchmark Harness (`Core`)
-- [ ] **Task 7.3** — Confidence Interval Coverage Benchmark (`Core`)
+- [x] **Task 7.3** — Confidence Interval Coverage Benchmark (`Core`)
 - [ ] **Task 7.4** — Poor-Overlap & Extreme-Weight Stress Tests (`Core`)
 - [ ] **Task 7.5** — Nuisance Misspecification & Cross-Fitting Tests (`Advanced`)
 - [ ] **Task 7.6** — DiD / Experiment Failure-Mode Simulation Suite (`Core`)
