@@ -21,10 +21,13 @@ from causalimpact.experiments.spec import ExperimentSpec
 from causalimpact.experiments.srm import check_srm_from_assignments
 from causalimpact.observational.overlap import check_overlap
 from causalimpact.observational.propensity import estimate_propensity
+from causalimpact.panel.event_study import twfe_event_study
+from causalimpact.panel.pre_trends import check_pre_trends
 from causalimpact.services.analysis import AnalysisResult, AnalysisService, DiagnosticStep
 from causalimpact.services.estimator_factory import (
     AIPWConfig,
     EstimatorConfig,
+    SingleCohortDiDConfig,
     WeightingConfig,
     build_estimator,
 )
@@ -38,6 +41,9 @@ class DiagnosticsConfig(BaseModel):
     )
     overlap_covariates: tuple[CovariateSpec, ...] | None = Field(
         default=None, description="defaults to the estimator covariates for propensity methods"
+    )
+    pre_trends: bool = Field(
+        default=True, description="event-study pre-trend check for multi-period DiD estimators"
     )
 
 
@@ -75,6 +81,13 @@ def build_diagnostics(spec: RunSpec, estimand: Estimand) -> list[DiagnosticStep]
             return check_overlap(ps, estimand.type)
 
         steps.append(DiagnosticStep("overlap", overlap))
+    if isinstance(config, SingleCohortDiDConfig) and spec.diagnostics.pre_trends:
+        panel = config.panel
+
+        def pre_trends(df: pd.DataFrame) -> DiagnosticResult:
+            return check_pre_trends(twfe_event_study(df, panel))
+
+        steps.append(DiagnosticStep("pre_trends", pre_trends))
     return steps
 
 

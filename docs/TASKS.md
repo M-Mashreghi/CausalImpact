@@ -76,7 +76,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 7.6** — DiD / Experiment Failure-Mode Simulation Suite (`Core`)
 
 ## Phase 8 — Hardening, CI/CD & Operations
-- [ ] **Task 8.1** — End-to-End Regression Suite (`Core`)
+- [x] **Task 8.1** — End-to-End Regression Suite (`Core`)
 - [ ] **Task 8.2** — Observability & Health Checks (`Core`)
 - [ ] **Task 8.3** — Dockerization & Demo Stack (`Core`)
 - [ ] **Task 8.4** — GitHub Actions CI & Research Gates (`Core`)

@@ -210,3 +210,48 @@ def observational(rng: np.random.Generator, *, n: int = 3000, strength: float = 
         estimator=AIPWEstimator(treatment, (X,)),
         diagnostics=[DiagnosticStep("overlap", overlap_check)],
     )
+
+
+def panel_policy(rng: np.random.Generator, *, pre_trend_slope: float = 0.0) -> Scenario:
+    """Single-cohort policy rollout analysed with multi-period DiD (ATT)."""
+    from causalimpact.panel.contract import PanelSpec
+    from causalimpact.panel.multi_period import SingleCohortDiD
+    from causalimpact.simulation.dgp import PanelConfig, simulate
+
+    estimands, dags = _registries()
+    estimands.register(
+        Estimand(
+            estimand_id="att_outcome",
+            type=EstimandType.ATT,
+            treatment="treatment_start",
+            outcome="outcome",
+            target_population=POP,
+        )
+    )
+    service = AnalysisService(estimands, dags)
+    design = StudyDesign(
+        title="Regional policy rollout",
+        research_question="What did the policy do to the outcome in adopting regions?",
+        design_family=DesignFamily.PANEL,
+        target_population=POP,
+        unit_of_analysis="unit_id",
+        treatment="treatment_start",
+        outcome="outcome",
+        assignment_mechanism="policy adopted by a subset of units in period 5",
+        time_zero="policy start (period 5)",
+        estimand_id="att_outcome",
+        interference_assessment="no spillovers across units assumed",
+        missingness_plan="balanced administrative panel",
+        inference_unit="unit_id",
+        sensitivity_plan="pre-trend diagnostics and comparison-group variants",
+        primary_analysis="single-cohort multi-period DiD",
+        assumptions=_justified(DesignFamily.PANEL),
+    )
+    seed = int(rng.integers(0, 2**31))
+    data = simulate(PanelConfig(n_units=300, pre_trend_slope=pre_trend_slope), seed).data
+    return Scenario(
+        service=service,
+        design=_ready(design, service),
+        data=data,
+        estimator=SingleCohortDiD(PanelSpec()),
+    )

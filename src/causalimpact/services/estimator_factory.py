@@ -19,6 +19,9 @@ from causalimpact.experiments.regression import RegressionAdjustedITT
 from causalimpact.observational.aipw import AIPWEstimator
 from causalimpact.observational.outcome_regression import OutcomeRegressionEstimator
 from causalimpact.observational.weighting import WeightingEstimator, WeightScheme
+from causalimpact.panel.contract import PanelSpec
+from causalimpact.panel.did import TwoPeriodDiD
+from causalimpact.panel.multi_period import ComparisonGroup, SingleCohortDiD
 
 
 class _Base(BaseModel):
@@ -63,6 +66,25 @@ class OutcomeRegressionConfig(_Base):
     n_bootstrap: int = Field(default=500, ge=50, le=5000)
 
 
+class TwoPeriodDiDConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    kind: Literal["did_2x2"] = "did_2x2"
+    panel: PanelSpec = Field(default_factory=PanelSpec)
+    pre_period: int
+    post_period: int
+
+
+class SingleCohortDiDConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    kind: Literal["did_single_cohort"] = "did_single_cohort"
+    panel: PanelSpec = Field(default_factory=PanelSpec)
+    comparison: ComparisonGroup = ComparisonGroup.NEVER_TREATED
+
+
+PanelEstimatorConfig = TwoPeriodDiDConfig | SingleCohortDiDConfig
+
 EstimatorConfig = Annotated[
     DifferenceInMeansConfig
     | DifferenceInProportionsConfig
@@ -70,7 +92,9 @@ EstimatorConfig = Annotated[
     | CupedConfig
     | AIPWConfig
     | WeightingConfig
-    | OutcomeRegressionConfig,
+    | OutcomeRegressionConfig
+    | TwoPeriodDiDConfig
+    | SingleCohortDiDConfig,
     Field(discriminator="kind"),
 ]
 
@@ -99,4 +123,8 @@ def build_estimator(config: EstimatorConfig, *, seed: int) -> Estimator:
             return OutcomeRegressionEstimator(
                 config.treatment, config.covariates, seed=seed, n_bootstrap=config.n_bootstrap
             )
+        case TwoPeriodDiDConfig():
+            return TwoPeriodDiD(config.panel, config.pre_period, config.post_period)
+        case SingleCohortDiDConfig():
+            return SingleCohortDiD(config.panel, config.comparison)
     raise ValueError(f"unsupported estimator configuration: {config!r}")

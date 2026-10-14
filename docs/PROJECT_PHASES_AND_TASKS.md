@@ -1803,7 +1803,7 @@ Deliver `DiD / Experiment Failure-Mode Simulation Suite` without weakening desig
 
 ### Task 8.1: End-to-End Regression Suite
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1813,14 +1813,21 @@ Deliver `End-to-End Regression Suite` without weakening design/identification bo
 - Exercise design → estimate → diagnostics → report for each major family using fakes/fixtures.
 
 **Task-specific verification**
-- [ ] All supported family paths green.
+- [x] All supported family paths green.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `tests/e2e/test_end_to_end.py` and a panel scenario in `tests/integration/scenarios.py`. To let every family run through the same declarative path, `TwoPeriodDiDConfig` / `SingleCohortDiDConfig` were added to the estimator factory, and `DiagnosticsConfig.pre_trends` adds an event-study pre-trend check for multi-period DiD. A circular import between reporting and the services package was removed (lazy import in `export_bundle`).
+- Each family (randomized: difference in means with SRM and attrition; observational: AIPW with overlap; panel: single-cohort DiD with pre-trends) runs design → `RunSpec` → service → diagnostics → estimate within 4 SE of the simulated truth → report with all required sections → bundle export → deterministic rerun. Each family's blocked path (SRM, poor overlap, injected pre-trend) withholds the estimate and reports "Causal interpretation not supported" with the blocking diagnostic.
+- Verification found a wrong hand-written truth for the panel case (2.0 instead of 2.25 for post-period effects 1, 2, 3, 3); the test now uses the correct value.
+- Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1926,10 +1933,10 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 12 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
-| 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
+| 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 1 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **46** |
+| **Total** | **65** | **51** | **14** | **47** |

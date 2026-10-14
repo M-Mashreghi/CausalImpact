@@ -29,7 +29,6 @@ from causalimpact.domain.estimands import Estimand, EstimandRegistry
 from causalimpact.domain.study_design import StudyDesign
 from causalimpact.domain.types import utc_now
 from causalimpact.ingestion.dataset_version import dataset_version
-from causalimpact.reporting.report import build_report, render_markdown
 from causalimpact.services.analysis import AnalysisResult, AnalysisService
 from causalimpact.services.run_spec import RunSpec, execute
 
@@ -201,6 +200,10 @@ def export_bundle(
     service: AnalysisService,
     directory: str | Path,
 ) -> Path:
+    # Imported here: reporting depends on services.analysis, and services' package
+    # initialiser imports this module, so a top-level import would be circular.
+    from causalimpact.reporting.report import build_report, render_markdown
+
     out = Path(directory)
     out.mkdir(parents=True, exist_ok=False)
     design = result.design
