@@ -22,7 +22,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Task 6.3/6.4: Streamlit study designer and diagnostics dashboard (UI only, no causal math).
+dashboard = ["streamlit>=1.38"]
 dev = [
+    "streamlit>=1.38",
     "pytest>=8.2",
     "pytest-cov>=5.0",
     "pytest-xdist>=3.6",  # parallel runs; the simulation suite is CPU-bound

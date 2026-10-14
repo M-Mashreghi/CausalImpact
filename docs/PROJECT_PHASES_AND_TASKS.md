@@ -1471,7 +1471,7 @@ Deliver `FastAPI Study & Analysis API` without weakening design/identification b
 
 ### Task 6.3: Streamlit Study Designer
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1482,14 +1482,20 @@ Deliver `Streamlit Study Designer` without weakening design/identification bound
 - Prevent AnalysisReady transition on invalid design.
 
 **Task-specific verification**
-- [ ] Critical form flow smoke tests where practical.
+- [x] Critical form flow smoke tests where practical.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/dashboard/designer.py` (controller: `DesignForm`, `build_artifacts`, `register_and_promote`, `parse_edges`, `required_assumptions`, `PromotionOutcome`) and `src/causalimpact/dashboard/designer_app.py` (Streamlit page). Dependency: `streamlit` as the `dashboard` extra (also in dev for tests), justified by this task. `docs/DEPLOYMENT.md` documents how to start the designer and the API.
+- Guided form for question, population, unit, treatment, outcome, estimand, identification fields, DAG edges / unobserved nodes / adjustment set / forbidden post-treatment variables, and a justification for each required assumption of the chosen family. Submitting registers the estimand, DAG and adjustment set and attempts Draft → Validated → AnalysisReady through `DesignReadinessValidator`; on failure the design stays Validated and every blocking problem is shown. The page holds no logic beyond layout.
+- Tests: `tests/integration/test_designer.py` (complete observational form reaches AnalysisReady; mediator in adjustment set, insufficient set, missing time zero, unjustified assumptions and missing DAG each keep it out with the right problem; edge parsing; Streamlit `AppTest` smoke tests: incomplete design shows an error and no success, complete experiment shows AnalysisReady). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1863,9 +1869,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 8 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 9 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **36** |
+| **Total** | **65** | **51** | **14** | **37** |

@@ -10,6 +10,8 @@ uv run pytest                # or in parallel: OPENBLAS_NUM_THREADS=1 uv run pyt
 uv run ruff check src tests
 uv run ruff format --check src tests
 uv run mypy
+uv run streamlit run src/causalimpact/dashboard/designer_app.py   # study designer
+uv run uvicorn --factory causalimpact.api:create_app             # HTTP API
 ```
 
 ## Environment
