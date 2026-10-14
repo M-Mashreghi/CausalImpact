@@ -999,7 +999,7 @@ Deliver `Multi-Period DiD Baseline` without weakening design/identification boun
 
 ### Task 4.4: Classical Event-Study Diagnostic
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1010,14 +1010,21 @@ Deliver `Classical Event-Study Diagnostic` without weakening design/identificati
 - Label as diagnostic/baseline and warn on staggered heterogeneous use.
 
 **Task-specific verification**
-- [ ] Relative-time indexing correct.
+- [x] Relative-time indexing correct.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/event_study.py` (`relative_time`, `twfe_event_study`); `src/causalimpact/estimators/ols.py` gains `ols_cluster_robust` (CR1) and `two_way_demean` (exact two-way fixed effects on balanced panels).
+- TWFE event study with relative-time dummies t − G_i, reference period (default −1) omitted and reported as 0, optional window with binned end points, never-treated units contributing only to the fixed effects, CR1 standard errors clustered by unit with t(G − 1) intervals.
+- Labelled in its output as a "diagnostic baseline, not a causal dynamic-effect estimate". Staggered adoption adds a `twfe_event_study_staggered` warning citing contamination under heterogeneous effects (Sun & Abraham 2021) and pointing to Task 4.8. Unbalanced panels, an unobserved or out-of-window reference, and a single cohort without never-treated units are refused.
+- Tests: `tests/unit/panel/test_event_study.py` (relative-time indexing; single cohort recovers zero pre-trends and dynamic effects 1/2/3 at the right indices; window binning; staggered flag; reference validation; demeaned regression equals the full unit + period dummy regression). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1803,9 +1810,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 3 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 4 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **27** |
+| **Total** | **65** | **51** | **14** | **28** |
