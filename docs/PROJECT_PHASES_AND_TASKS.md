@@ -793,7 +793,7 @@ Deliver `Outcome Regression Adjustment` without weakening design/identification 
 
 ### Task 3.7: Doubly Robust AIPW Estimator
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -804,14 +804,21 @@ Deliver `Doubly Robust AIPW Estimator` without weakening design/identification b
 - Expose influence-function based uncertainty for supported iid case.
 
 **Task-specific verification**
-- [ ] One correctly specified nuisance path remains approximately unbiased in simulation.
+- [x] One correctly specified nuisance path remains approximately unbiased in simulation.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/observational/aipw.py` (`AIPWEstimator`, `aipw_scores`).
+- AIPW for the ATE (Robins–Rotnitzky–Zhao score) and the ATT (doubly robust ATT score), using the outcome-nuisance and propensity interfaces from Tasks 3.2 and 3.6. Influence-function SE with a normal CI for the iid case. Overlap is checked first and blocking overlap refuses. Nuisances are fitted in-sample; `details` records `cross_fitting: false` and states that flexible ML learners require the cross-fitted engine (Task 3.8).
+- Tests: `tests/unit/observational/test_aipw.py` (score reduces to Horvitz–Thompson IPW with a zero outcome model and to g-computation with zero residuals; ATE and ATT recovered with correct models; refusal on poor overlap; ATC refused; deterministic; simulations: outcome model wrong → AIPW unbiased while regression is biased ≈ −0.22; propensity model wrong → AIPW unbiased while IPW is biased ≈ +0.24; population-ATE coverage in [0.91, 0.98]).
+- Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1766,11 +1773,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 15 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 16 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **22** |
+| **Total** | **65** | **51** | **14** | **23** |

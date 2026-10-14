@@ -1,5 +1,6 @@
 """Observational causal inference: propensity, matching, weighting, AIPW, DML."""
 
+from causalimpact.observational.aipw import AIPWEstimator, aipw_scores
 from causalimpact.observational.eligibility import (
     CovariateScreen,
     VariableDecision,
@@ -43,6 +44,7 @@ from causalimpact.observational.weighting import (
 
 __all__ = [
     "SCHEME_ESTIMAND",
+    "AIPWEstimator",
     "ConvergenceError",
     "CovariateScreen",
     "LinearOutcomeModel",
@@ -59,6 +61,7 @@ __all__ = [
     "VariableDecision",
     "WeightScheme",
     "WeightingEstimator",
+    "aipw_scores",
     "check_overlap",
     "compute_weights",
     "ensure_overlap",
