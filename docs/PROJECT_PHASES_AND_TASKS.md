@@ -1592,7 +1592,7 @@ Deliver `Assumption-Aware Report Generator` without weakening design/identificat
 
 ### Task 6.7: Analysis Registry, Re-Run & Reproducibility Bundle
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1603,14 +1603,21 @@ Deliver `Analysis Registry, Re-Run & Reproducibility Bundle` without weakening d
 - Support rerun from bundle on fixture datasets.
 
 **Task-specific verification**
-- [ ] Fixture bundle reruns deterministically.
+- [x] Fixture bundle reruns deterministically.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/services/registry.py` (`AnalysisRegistry` on SQLite, `export_bundle`, `rerun_bundle`, `RerunCheck`, `BundleIntegrityError`, `load_bundle_data`) and `src/causalimpact/services/run_spec.py` (`RunSpec`, `DiagnosticsConfig`, `build_diagnostics`, `execute`): a declarative, serialisable run specification now shared by the API (6.2's request is a `RunSpec` plus data; the experiment spec moved under `diagnostics`).
+- Registry: designs (per version), estimands (redefinition refused), DAGs, adjustment sets, and runs with their spec and full result. Append-only: `invalidate` records an event with a reason; the stored result is never overwritten; `runs()` reports invalidation status.
+- Bundle: manifest (run id, fingerprint, dataset version, code version, SHA-256 of every artifact), design / estimand / DAG / adjustment-set / run-spec / result JSON, rendered report, dataset CSV and recorded dtypes. `rerun_bundle` verifies every file hash and the reloaded dataset's content hash (round-trip float parsing), re-runs through the service and checks fingerprint, estimate and interpretation.
+- Tests: `tests/integration/test_registry.py` (RCT and observational/DAG bundles rerun with identical fingerprint and estimate; tampered data rejected; registry round-trip after reopening; invalidation preserves history; estimand redefinition refused; mixed dtypes round-trip). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1888,9 +1895,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 12 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **40** |
+| **Total** | **65** | **51** | **14** | **41** |

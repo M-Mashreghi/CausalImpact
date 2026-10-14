@@ -54,7 +54,7 @@ def test_create_run_read_rct(rng: np.random.Generator) -> None:
             "estimator": {"kind": "difference_in_means", "treatment": TREATMENT},
             "data": {"records": records},
             "seed": 3,
-            "experiment": EXPERIMENT,
+            "diagnostics": {"experiment": EXPERIMENT},
         },
     )
     assert response.status_code == 201, response.json()
@@ -77,7 +77,7 @@ def test_srm_run_returns_not_supported(rng: np.random.Generator) -> None:
             "estimator": {"kind": "difference_in_means", "treatment": TREATMENT},
             "data": {"records": records},
             "seed": 3,
-            "experiment": EXPERIMENT,
+            "diagnostics": {"experiment": EXPERIMENT},
         },
     ).json()
     assert body["interpretation"] == "Causal interpretation not supported"

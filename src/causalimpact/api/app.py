@@ -22,7 +22,6 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 from causalimpact.dags import AdjustmentSet, CausalDAG, DagRegistry
 from causalimpact.design import DesignReadinessValidator
-from causalimpact.diagnostics import DiagnosticResult
 from causalimpact.domain import (
     DesignNotReadyError,
     DesignStatus,
@@ -31,17 +30,8 @@ from causalimpact.domain import (
     EstimandRegistry,
     StudyDesign,
 )
-from causalimpact.domain.variables import CovariateSpec
-from causalimpact.experiments import ExperimentSpec, check_attrition, check_srm_from_assignments
-from causalimpact.observational.overlap import check_overlap
-from causalimpact.observational.propensity import estimate_propensity
-from causalimpact.services import AnalysisResult, AnalysisService, DiagnosticStep
-from causalimpact.services.estimator_factory import (
-    AIPWConfig,
-    EstimatorConfig,
-    WeightingConfig,
-    build_estimator,
-)
+from causalimpact.services.analysis import AnalysisResult, AnalysisService
+from causalimpact.services.run_spec import RunSpec, execute
 
 logger = logging.getLogger("causalimpact.api")
 MAX_ROWS = 1_000_000
@@ -66,19 +56,12 @@ class DatasetPayload(BaseModel):
     records: list[dict[str, JsonValue]] = Field(min_length=1, max_length=MAX_ROWS)
 
 
-class RunRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class RunRequest(RunSpec):
+    """A ``RunSpec`` plus the analysis data."""
 
-    estimator: EstimatorConfig
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
     data: DatasetPayload
-    seed: int = Field(ge=0)
-    confidence_level: float = Field(default=0.95, gt=0.0, lt=1.0)
-    experiment: ExperimentSpec | None = Field(
-        default=None, description="adds SRM and attrition trust diagnostics (randomized)"
-    )
-    overlap_covariates: tuple[CovariateSpec, ...] | None = Field(
-        default=None, description="defaults to the estimator covariates for propensity methods"
-    )
 
 
 class RunSummary(BaseModel):
@@ -103,34 +86,6 @@ class ApiState:
     @property
     def service(self) -> AnalysisService:
         return AnalysisService(self.estimands, self.dags)
-
-
-def _trust_diagnostics(request: RunRequest, estimand: Estimand) -> list[DiagnosticStep]:
-    steps: list[DiagnosticStep] = []
-    experiment = request.experiment
-    if experiment is not None:
-
-        def srm(df: pd.DataFrame) -> DiagnosticResult:
-            return check_srm_from_assignments(experiment, df)
-
-        def attrition(df: pd.DataFrame) -> DiagnosticResult:
-            return check_attrition(experiment, df, df, estimand.outcome)
-
-        steps += [
-            DiagnosticStep("sample_ratio_mismatch", srm),
-            DiagnosticStep("attrition", attrition),
-        ]
-    config = request.estimator
-    if isinstance(config, AIPWConfig | WeightingConfig):
-        covariates = request.overlap_covariates or config.covariates
-        treatment = config.treatment
-
-        def overlap(df: pd.DataFrame) -> DiagnosticResult:
-            ps = estimate_propensity(df, treatment, covariates)
-            return check_overlap(ps, estimand.type)
-
-        steps.append(DiagnosticStep("overlap", overlap))
-    return steps
 
 
 def create_app(state: ApiState | None = None) -> FastAPI:
@@ -221,19 +176,9 @@ def create_app(state: ApiState | None = None) -> FastAPI:
     @app.post("/designs/{design_id}/runs", status_code=201)
     def run_analysis(design_id: str, request: RunRequest) -> AnalysisResult:
         design = _design(design_id)
-        if design.estimand_id is None or design.estimand_id not in state.estimands:
-            raise DesignNotReadyError("design estimand is not registered")
-        estimand = state.estimands.get(design.estimand_id)
         data = pd.DataFrame.from_records(request.data.records)
-        estimator = build_estimator(request.estimator, seed=request.seed)
-        result = state.service.run(
-            design,
-            estimator,
-            data,
-            diagnostics=_trust_diagnostics(request, estimand),
-            seed=request.seed,
-            confidence_level=request.confidence_level,
-        )
+        spec = RunSpec.model_validate(request.model_dump(exclude={"data"}))
+        result = execute(state.service, design, spec, data)
         state.runs[result.run.run_id] = result
         return result
 
