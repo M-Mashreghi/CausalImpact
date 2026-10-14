@@ -16,7 +16,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 2.3** — Baseline Balance Diagnostics (`Core`)
 - [x] **Task 2.4** — Difference-in-Means & Difference-in-Proportions (`Core`)
 - [x] **Task 2.5** — Regression-Adjusted Experiment Estimator (`Core`)
-- [ ] **Task 2.6** — CUPED / Pre-Period Variance Reduction (`Core`)
+- [x] **Task 2.6** — CUPED / Pre-Period Variance Reduction (`Core`)
 - [ ] **Task 2.7** — Power, MDE & Sample Size Engine (`Core`)
 - [ ] **Task 2.8** — Guardrail Metrics & Multiple-Testing Policy (`Core`)
 - [ ] **Task 2.9** — Clustered / Stratified Experiment Inference (`Advanced`)

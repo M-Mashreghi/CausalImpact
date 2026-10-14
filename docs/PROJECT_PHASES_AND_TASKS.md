@@ -406,7 +406,7 @@ Deliver `Regression-Adjusted Experiment Estimator` without weakening design/iden
 
 ### Task 2.6: CUPED / Pre-Period Variance Reduction
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -417,14 +417,21 @@ Deliver `CUPED / Pre-Period Variance Reduction` without weakening design/identif
 - Verify covariate is temporally prior and not treatment affected.
 
 **Task-specific verification**
-- [ ] Known correlated pre-period fixture reduces variance.
+- [x] Known correlated pre-period fixture reduces variance.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/experiments/cuped.py` (`CupedITT`, `cuped_theta`). `EffectEstimate` gains a `details` dict for estimator provenance.
+- Y_cv = Y − θ(X − mean X) with pooled θ = cov(Y, X)/var(X), then Welch difference in means of Y_cv; targets ITT only. `details` records the pre-metric, θ, the unadjusted SE, the variance ratio vs unadjusted and the outcome/pre-metric correlation.
+- Temporal guard: the pre-period metric must be classified eligible (known pre-treatment and not a treatment descendant); unknown timing is refused, not warned. Categorical, missing, constant pre-metrics and using the outcome itself are refused.
+- Tests: `tests/unit/experiments/test_cuped.py` (variance ratio ≈ 1 − ρ² = 0.36 at ρ = 0.8; θ equals the regression slope; no gain at ρ = 0; refusals; simulation: unbiased, coverage in [0.92, 0.98], variance < 50% of difference in means). Suite: 372 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none (ITT preserved).
 
 ---
 
@@ -1695,11 +1702,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 5 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 6 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **12** |
+| **Total** | **65** | **51** | **14** | **13** |

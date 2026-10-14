@@ -108,6 +108,9 @@ class EffectEstimate(BaseModel):
     n_treated: int | None = Field(default=None, ge=0)
     n_control: int | None = Field(default=None, ge=0)
     conditioning_values: dict[str, JsonValue] = Field(default_factory=dict)
+    details: dict[str, JsonValue] = Field(
+        default_factory=dict, description="estimator-specific provenance, e.g. CUPED theta"
+    )
 
     @model_validator(mode="after")
     def _numerically_sane(self) -> Self:
