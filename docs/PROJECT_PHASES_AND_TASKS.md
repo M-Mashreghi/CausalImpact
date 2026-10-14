@@ -699,7 +699,7 @@ Deliver `Overlap / Positivity Diagnostics` without weakening design/identificati
 
 ### Task 3.4: Matching Engine & Matched-Sample Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -710,14 +710,21 @@ Deliver `Matching Engine & Matched-Sample Diagnostics` without weakening design/
 - Report matched counts, distance quality and post-match balance.
 
 **Task-specific verification**
-- [ ] Known toy match pairs are reproducible.
+- [x] Known toy match pairs are reproducible.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/observational/matching.py` (`MatchingConfig`, `match_on_propensity`, `MatchResult`, `matched_sample_diagnostics`); `weighted_balance_rows` added to `src/causalimpact/diagnostics/balance.py` (weighted means, denominator from unweighted arm variances).
+- Strategy: 1:k nearest-neighbour matching on the logit propensity score, with replacement (order-independent), caliper 0.2 SD of the logit score by default, deterministic tie-breaking by input order; targets the ATT. Matched-sample unit weights (treated 1, controls usage / k) are exposed for balance and later estimation. Matching without replacement is refused (order-dependent).
+- Diagnostics: matched / unmatched treated counts, unique controls and maximum reuse, mean / max distance, caliper, SMD before and after matching (plus max |SMD|), and a warning when the caliper drops treated units, stating that the target population becomes the matched treated units.
+- Tests: `tests/unit/observational/test_matching.py` (hand-checked toy pairs, reuse weights, caliper drop, 1:2 matching, order independence, max |SMD| on confounded data drops from > 0.3 to < 0.1, target-population change reported). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: caliper drops are surfaced as an explicit ATT-population restriction.
 
 ---
 
@@ -1745,11 +1752,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 12 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 13 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **19** |
+| **Total** | **65** | **51** | **14** | **20** |

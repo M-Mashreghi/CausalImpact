@@ -5,6 +5,12 @@ from causalimpact.observational.eligibility import (
     VariableDecision,
     screen_adjustment_candidates,
 )
+from causalimpact.observational.matching import (
+    MatchingConfig,
+    MatchResult,
+    match_on_propensity,
+    matched_sample_diagnostics,
+)
 from causalimpact.observational.overlap import (
     OverlapPolicy,
     OverlapRefusedError,
@@ -25,6 +31,8 @@ __all__ = [
     "ConvergenceError",
     "CovariateScreen",
     "LogisticPropensity",
+    "MatchResult",
+    "MatchingConfig",
     "OverlapPolicy",
     "OverlapRefusedError",
     "PropensityModel",
@@ -35,5 +43,7 @@ __all__ = [
     "estimand_weights",
     "estimate_propensity",
     "kish_ess",
+    "match_on_propensity",
+    "matched_sample_diagnostics",
     "screen_adjustment_candidates",
 ]

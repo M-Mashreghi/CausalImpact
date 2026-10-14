@@ -179,3 +179,78 @@ def summarize_balance(
         "table": [r.model_dump(mode="json") for r in rows],
     }
     return DiagnosticResult(name=name, findings=tuple(findings), metrics=metrics)
+
+
+def _weighted_mean(x: np.ndarray, w: np.ndarray) -> float | None:
+    total = float(w.sum())
+    return float(np.dot(w, x) / total) if total > 0 else None
+
+
+def _weighted_row(
+    covariate: str,
+    level: str | None,
+    comparison: str,
+    values: pd.Series,
+    treated: np.ndarray,
+    weights: np.ndarray,
+    kind: Kind,
+) -> BalanceRow:
+    """Weighted SMD with the denominator from the *unweighted* arm variances.
+
+    Holding the denominator fixed means a change in SMD reflects a change in the weighted
+    means only, which is the standard convention for comparing balance before and after
+    matching or weighting.
+    """
+    present = values.notna().to_numpy()
+    x = values.to_numpy(dtype=float)
+    t_mask, c_mask = present & treated, present & ~treated
+    _, v_t = _moments(x[t_mask], kind)
+    _, v_c = _moments(x[c_mask], kind)
+    m_t = _weighted_mean(x[t_mask], weights[t_mask])
+    m_c = _weighted_mean(x[c_mask], weights[c_mask])
+    smd: float | None = None
+    if m_t is not None and m_c is not None and v_t is not None and v_c is not None:
+        pooled = math.sqrt((v_t + v_c) / 2.0)
+        if pooled > 0:
+            smd = (m_t - m_c) / pooled
+        elif m_t == m_c:
+            smd = 0.0
+    return BalanceRow(
+        covariate=covariate,
+        level=level,
+        comparison=comparison,
+        mean_treated=m_t,
+        mean_control=m_c,
+        sd_treated=None if v_t is None else math.sqrt(v_t),
+        sd_control=None if v_c is None else math.sqrt(v_c),
+        smd=smd,
+        n_treated=int(np.sum(t_mask & (weights > 0))),
+        n_control=int(np.sum(c_mask & (weights > 0))),
+        missing_treated=int(np.sum(~present & treated)),
+        missing_control=int(np.sum(~present & ~treated)),
+    )
+
+
+def weighted_balance_rows(
+    data: pd.DataFrame,
+    treated: np.ndarray,
+    weights: np.ndarray,
+    covariates: tuple[CovariateSpec, ...],
+    comparison: str,
+) -> list[BalanceRow]:
+    """Balance rows for a two-group comparison under unit weights (matching / weighting)."""
+    t = np.asarray(treated, dtype=bool)
+    w = np.asarray(weights, dtype=float)
+    if w.shape != t.shape or np.any(w < 0) or not np.all(np.isfinite(w)):
+        raise ValueError("weights must be finite, non-negative and aligned with units")
+    rows: list[BalanceRow] = []
+    for cov in covariates:
+        column = data[cov.name]
+        if cov.dtype is CovariateDType.CATEGORICAL:
+            for level in sorted(column.dropna().astype(str).unique()):
+                indicator = _indicator(column, level)
+                rows.append(_weighted_row(cov.name, level, comparison, indicator, t, w, "binary"))
+        else:
+            kind: Kind = "binary" if cov.dtype is CovariateDType.BINARY else "numeric"
+            rows.append(_weighted_row(cov.name, None, comparison, column, t, w, kind))
+    return rows
