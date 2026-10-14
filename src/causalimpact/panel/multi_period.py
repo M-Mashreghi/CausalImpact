@@ -20,15 +20,14 @@ Comparison-group rule is explicit:
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from enum import StrEnum
 
 import pandas as pd
-from scipy import stats
 
 from causalimpact.domain.estimands import EffectEstimate, Estimand, EstimandType
 from causalimpact.panel.contract import PanelSpec, validate_panel
+from causalimpact.panel.inference import contrast_inference
 
 
 class ComparisonGroup(StrEnum):
@@ -81,11 +80,17 @@ class SingleCohortDiD:
         diff = wide[True] - wide[False]
         d_t, d_c = diff.loc[treated_units].to_numpy(), diff.loc[control_units].to_numpy()
 
-        effect = float(d_t.mean() - d_c.mean())
-        v_t, v_c = d_t.var(ddof=1) / d_t.size, d_c.var(ddof=1) / d_c.size
-        se = math.sqrt(v_t + v_c)
-        df = (v_t + v_c) ** 2 / (v_t**2 / (d_t.size - 1) + v_c**2 / (d_c.size - 1))
-        crit = float(stats.t.ppf(0.5 + confidence_level / 2, df))
+        sample = diff.loc[treated_units.union(control_units)]
+        inference = contrast_inference(
+            data,
+            s,
+            sample.index,
+            sample.to_numpy(),
+            sample.index.isin(treated_units),
+            confidence_level,
+        )
+        effect, se = inference.estimate, inference.std_error
+        crit = inference.critical_value
         return EffectEstimate(
             estimand_id=estimand.estimand_id,
             estimand_type=estimand.type,
@@ -95,9 +100,9 @@ class SingleCohortDiD:
             ci_lower=effect - crit * se,
             ci_upper=effect + crit * se,
             confidence_level=confidence_level,
-            inference_method="unit_level_welch_t (clustered on unit)",
-            p_value=float(2 * stats.t.sf(abs(effect) / se, df)),
-            degrees_of_freedom=float(df),
+            inference_method=inference.method,
+            p_value=inference.p_value(),
+            degrees_of_freedom=inference.degrees_of_freedom,
             n_units=int(d_t.size + d_c.size),
             n_treated=int(d_t.size),
             n_control=int(d_c.size),
@@ -112,5 +117,6 @@ class SingleCohortDiD:
                 else 0,
                 "aggregation": "ATT averaged over post periods, equal weight per period",
                 "identifying_assumptions": ["parallel_trends", "no_anticipation"],
+                "cluster_diagnostics": inference.cluster_diagnostics,
             },
         )

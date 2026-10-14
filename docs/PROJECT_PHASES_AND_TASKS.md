@@ -1060,7 +1060,7 @@ Deliver `Pre-Trend Diagnostics` without weakening design/identification boundari
 
 ### Task 4.6: Cluster-Robust Inference
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1071,14 +1071,21 @@ Deliver `Cluster-Robust Inference` without weakening design/identification bound
 - Validate cluster count and warn for unsupported small-cluster inference.
 
 **Task-specific verification**
-- [ ] Clustered DGP SE differs from naive iid as expected.
+- [x] Clustered DGP SE differs from naive iid as expected.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/estimators/clustering.py` (`ClusterPolicy`, `check_clusters`, `clustered_mean_difference`, `ensure_clusters`, `ClusterInferenceError`), `src/causalimpact/panel/inference.py` (`contrast_inference`, shared by the 2x2 and multi-period DiD estimators); CR1 OLS from Task 4.4. The event study now clusters on `PanelSpec.cluster` when declared.
+- Configuration: `PanelSpec.cluster` selects the cluster level (default: the unit). Units must be nested in clusters. With a declared cluster, contrasts use CR1 with t(G − 1); without one, the unit-level Welch path is used. Cluster diagnostics (counts, sizes, treated clusters, findings) are attached to every estimate.
+- Small-cluster policy (configurable): warn below 30 clusters, refuse below 5, and warn when fewer than 5 clusters are treated (Conley & Taber).
+- Tests: `tests/unit/panel/test_clustering.py` (CR1 covariance vs hand computation; on a state-shock DGP the clustered SE is > 3× the naive SE; warn/refuse thresholds; estimator refuses 4 clusters; configurable policy; nesting enforced; event study clusters on state; simulation: naive coverage < 0.6, clustered coverage in [0.89, 0.99]). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1816,9 +1823,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 5 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **29** |
+| **Total** | **65** | **51** | **14** | **30** |

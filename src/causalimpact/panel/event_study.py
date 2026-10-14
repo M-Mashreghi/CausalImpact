@@ -21,6 +21,7 @@ from pydantic import JsonValue
 from scipy import stats
 
 from causalimpact.diagnostics.base import DiagnosticResult, Finding, FindingSeverity
+from causalimpact.estimators.clustering import check_clusters, ensure_clusters
 from causalimpact.estimators.ols import ols_cluster_robust, two_way_demean
 from causalimpact.panel.contract import PanelSpec, validate_panel
 
@@ -65,9 +66,15 @@ def twfe_event_study(
     period = data[spec.period].to_numpy()
     x = two_way_demean(dummies, unit, period)
     y = two_way_demean(data[spec.outcome].to_numpy(dtype=float), unit, period)
-    fit = ols_cluster_robust(x, y, unit)
+    nested = spec.cluster is None or (data.groupby(spec.unit)[spec.cluster].nunique() == 1).all()  # noqa: PD101
+    if not nested:
+        raise ValueError("units must be nested in clusters (cluster constant within unit)")
+    clusters = data[spec.cluster].to_numpy() if spec.cluster is not None else unit
+    cluster_check = check_clusters(clusters, data[spec.treatment_start].notna().to_numpy())
+    ensure_clusters(cluster_check)
+    fit = ols_cluster_robust(x, y, clusters)
     se = np.sqrt(np.diag(fit.cov))
-    n_clusters = len(np.unique(unit))
+    n_clusters = len(np.unique(clusters))
     crit = float(stats.t.ppf(0.5 + confidence_level / 2, n_clusters - 1))
     counts = rel.value_counts()
 
@@ -95,7 +102,7 @@ def twfe_event_study(
         }
     coefficients: list[JsonValue] = [rows[k] for k in sorted(rows)]
 
-    findings: list[Finding] = []
+    findings: list[Finding] = list(cluster_check.findings)
     if timing.is_staggered:
         findings.append(
             Finding(
@@ -113,7 +120,7 @@ def twfe_event_study(
         "reference_relative_time": reference,
         "window": list(window) if window else None,
         "confidence_level": confidence_level,
-        "inference": "CR1 clustered by unit, t with G-1 df",
+        "inference": f"CR1 clustered by {spec.cluster or spec.unit}, t with G-1 df",
         "n_clusters": n_clusters,
         "staggered": timing.is_staggered,
         "coefficients": coefficients,

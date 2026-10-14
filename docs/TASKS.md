@@ -42,7 +42,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 4.3** — Multi-Period DiD Baseline (`Core`)
 - [x] **Task 4.4** — Classical Event-Study Diagnostic (`Core`)
 - [x] **Task 4.5** — Pre-Trend Diagnostics (`Core`)
-- [ ] **Task 4.6** — Cluster-Robust Inference (`Core`)
+- [x] **Task 4.6** — Cluster-Robust Inference (`Core`)
 - [ ] **Task 4.7** — Group-Time ATT for Staggered Adoption (`Advanced`)
 - [ ] **Task 4.8** — Heterogeneity-Robust Dynamic Event Study (`Advanced`)
 - [ ] **Task 4.9** — Synthetic Control & Donor-Pool Diagnostics (`Advanced`)
