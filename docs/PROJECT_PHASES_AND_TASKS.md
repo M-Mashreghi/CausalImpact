@@ -1274,7 +1274,7 @@ Deliver `Weight Trimming / Overlap Sensitivity` without weakening design/identif
 
 ### Task 5.4: Pre-Specified Subgroup Effects
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1285,14 +1285,21 @@ Deliver `Pre-Specified Subgroup Effects` without weakening design/identification
 - Report multiplicity/uncertainty.
 
 **Task-specific verification**
-- [ ] Subgroup definitions are versioned and reproducible.
+- [x] Subgroup definitions are versioned and reproducible.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/heterogeneity/subgroups.py` (`SubgroupDefinition`, `SubgroupPlan`, `estimate_subgroups`, `subgroup_estimand`, `SubgroupReport`, `SubgroupResult`).
+- Subgroups (by value set or numeric range) are declared in a timestamped plan with a content version; only declared subgroups are estimated, after the declaration time. Defining variables must be declared covariates known to be pre-treatment. Each subgroup uses the same estimator and estimand type, restricted via a derived estimand (`<id>__sub_<name>`, inclusion criterion recorded).
+- Uncertainty and multiplicity: each subgroup's own interval; p-values adjusted across subgroups with the declared correction (default Holm); a Cochran Q homogeneity test when subgroups are disjoint (skipped with a reason otherwise). Failed subgroups are recorded with their error.
+- Tests: `tests/unit/heterogeneity/test_subgroups.py` (declared-only results with derived estimands; known subgroup effect recovered; adjusted p-values equal the reference correction; Q test detects heterogeneity; overlap skips Q; version reproducible and changes with the plan; post-treatment variable refused; declaration ordering; failure recorded; definition validation). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: subgroup results carry derived, population-restricted estimands.
 
 ---
 
@@ -1837,8 +1844,8 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
-| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 2 |
+| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 3 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **32** |
+| **Total** | **65** | **51** | **14** | **33** |
