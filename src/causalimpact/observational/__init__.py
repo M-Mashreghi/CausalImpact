@@ -11,6 +11,13 @@ from causalimpact.observational.matching import (
     match_on_propensity,
     matched_sample_diagnostics,
 )
+from causalimpact.observational.outcome_regression import (
+    LinearOutcomeModel,
+    OutcomeLearner,
+    OutcomeNuisance,
+    OutcomeRegressionEstimator,
+    fit_outcome_nuisance,
+)
 from causalimpact.observational.overlap import (
     OverlapPolicy,
     OverlapRefusedError,
@@ -38,9 +45,13 @@ __all__ = [
     "SCHEME_ESTIMAND",
     "ConvergenceError",
     "CovariateScreen",
+    "LinearOutcomeModel",
     "LogisticPropensity",
     "MatchResult",
     "MatchingConfig",
+    "OutcomeLearner",
+    "OutcomeNuisance",
+    "OutcomeRegressionEstimator",
     "OverlapPolicy",
     "OverlapRefusedError",
     "PropensityModel",
@@ -53,6 +64,7 @@ __all__ = [
     "ensure_overlap",
     "estimand_weights",
     "estimate_propensity",
+    "fit_outcome_nuisance",
     "kish_ess",
     "match_on_propensity",
     "matched_sample_diagnostics",

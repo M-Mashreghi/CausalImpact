@@ -762,7 +762,7 @@ Deliver `IPW / Stabilized / Overlap Weighting` without weakening design/identifi
 
 ### Task 3.6: Outcome Regression Adjustment
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -773,14 +773,21 @@ Deliver `Outcome Regression Adjustment` without weakening design/identification 
 - Keep nuisance prediction separate from causal effect object.
 
 **Task-specific verification**
-- [ ] Known linear DGP recovers truth.
+- [x] Known linear DGP recovers truth.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/observational/outcome_regression.py` (`OutcomeLearner` / `FittedOutcomeModel` protocols, `LinearOutcomeModel`, `OutcomeNuisance`, `fit_outcome_nuisance`, `g_computation`, `OutcomeRegressionEstimator`).
+- Nuisance and effect are separate: arm-specific outcome models μ₁, μ₀ live in `OutcomeNuisance` (no causal contrast); `g_computation` turns them into ATE (mean μ₁ − μ₀), ATT (treated: Y − μ₀) or ATC (controls: μ₁ − Y). Covariates go through the eligibility-enforcing design matrix.
+- Uncertainty: seeded nonparametric bootstrap. Because regression extrapolates silently, the propensity overlap diagnostic for the same estimand is computed and attached to `details` (status and findings): surfaced, not used to refuse.
+- Tests: `tests/unit/observational/test_outcome_regression.py` (nuisance recovers the DGP's arm-specific lines; ATE/ATT/ATC recovered on a known linear heterogeneous DGP; toy g-computation formulas; poor overlap surfaced; ATO refused; reproducible bootstrap; simulation coverage in [0.89, 0.99]). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1759,11 +1766,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 14 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 15 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **21** |
+| **Total** | **65** | **51** | **14** | **22** |

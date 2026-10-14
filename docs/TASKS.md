@@ -30,7 +30,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [x] **Task 3.3** — Overlap / Positivity Diagnostics (`Core`)
 - [x] **Task 3.4** — Matching Engine & Matched-Sample Diagnostics (`Core`)
 - [x] **Task 3.5** — IPW / Stabilized / Overlap Weighting (`Core`)
-- [ ] **Task 3.6** — Outcome Regression Adjustment (`Core`)
+- [x] **Task 3.6** — Outcome Regression Adjustment (`Core`)
 - [ ] **Task 3.7** — Doubly Robust AIPW Estimator (`Core`)
 - [ ] **Task 3.8** — Cross-Fitting & Double ML Engine (`Advanced`)
 - [ ] **Task 3.9** — Covariate Balance & Weighted Diagnostics (`Core`)
