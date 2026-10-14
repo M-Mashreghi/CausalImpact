@@ -1,5 +1,6 @@
 """Randomized-experiment trust checks and estimators."""
 
+from causalimpact.experiments.attrition import check_attrition
 from causalimpact.experiments.balance import check_baseline_balance
 from causalimpact.experiments.cuped import CupedITT
 from causalimpact.experiments.decision import (
@@ -52,6 +53,7 @@ __all__ = [
     "SampleSize",
     "adjust_p_values",
     "check_assignment_integrity",
+    "check_attrition",
     "check_baseline_balance",
     "check_srm",
     "check_srm_from_assignments",

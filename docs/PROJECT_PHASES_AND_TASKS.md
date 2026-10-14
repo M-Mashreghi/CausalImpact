@@ -523,7 +523,7 @@ Deliver `Clustered / Stratified Experiment Inference` without weakening design/i
 
 ### Task 2.10: Attrition & Missing-Outcome Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -534,14 +534,22 @@ Deliver `Attrition & Missing-Outcome Diagnostics` without weakening design/ident
 - Block clean ship/no-ship labels when differential attrition is unresolved.
 
 **Task-specific verification**
-- [ ] Differential attrition fixture triggers warning/block.
+- [x] Differential attrition fixture triggers warning/block.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/experiments/attrition.py` (`check_attrition`).
+- A randomization unit is attrited when absent from the analysis data or all its outcomes are missing. Reports per-arm assigned/attrited counts and rates, overall rate, chi-square test of independence (arm × attrited), the largest pairwise rate difference, and optional per-assignment-period rates.
+- Blocking when differential attrition is detectable (p < α) or the rate difference exceeds the declared tolerance (default 0.01), so large differences in small experiments are not missed. A recorded `resolution` (e.g. bounds analysis) downgrades it to a visible warning, never removes it. High overall attrition and period-level differentials are warnings.
+- Integrates with Task 2.8: a blocking attrition result makes `decide` return `blocked`.
+- Tests: `tests/unit/experiments/test_attrition.py` (balanced passes; 5% vs 10% blocks; underpowered large difference blocks; absent units counted; resolution path; high overall; period-level flag; decision blocked). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1716,11 +1724,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 8 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 9 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **15** |
+| **Total** | **65** | **51** | **14** | **16** |
