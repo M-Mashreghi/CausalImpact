@@ -1625,7 +1625,7 @@ Deliver `Analysis Registry, Re-Run & Reproducibility Bundle` without weakening d
 
 ### Task 7.1: Synthetic Data Generator with Known Effects
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1636,14 +1636,21 @@ Deliver `Synthetic Data Generator with Known Effects` without weakening design/i
 - Persist true estimand for benchmark comparison.
 
 **Task-specific verification**
-- [ ] Seed reproducibility.
+- [x] Seed reproducibility.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/simulation/dgp.py` (`RCTConfig`, `ObservationalConfig`, `PanelConfig`, discriminated `SimulationConfig`, `simulate`, `SimulatedDataset` with `manifest()` / `save()`).
+- RCT: individual or cluster randomisation, continuous or binary outcome, heterogeneity, prognostic covariate, realised-share deviation (SRM) and arm-specific attrition. Observational: confounding strength, heterogeneous effects, optional nonlinear outcome / propensity (for misspecification studies). Panel: staggered cohorts, never-treated share, dynamic and cohort-scaled effects, pre-trend slope, anticipation, clustered shocks.
+- Truths are sample-level averages of the known unit effects (ITT/ATE, ATT, ATC, ATO with the true propensity; panel post-period ATT and dynamic effects) plus closed-form population values where available. The random stream is derived from the seed per DGP kind. `save()` persists data and a manifest with config, seed, dataset content hash and truths.
+- Tests: `tests/simulation/test_dgp.py` (seed reproducibility for all three kinds; persisted truth manifest; RCT truth and SRM / attrition / cluster switches; ATT > ATE > ATC under heterogeneity; confounded naive contrast; generated panel passes timing validation as staggered and balanced; injected pre-trend slope recovered). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1892,7 +1899,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 8 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
@@ -1900,4 +1907,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **41** |
+| **Total** | **65** | **51** | **14** | **42** |
