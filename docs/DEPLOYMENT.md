@@ -6,7 +6,7 @@ Python 3.12 is the pinned baseline (`.python-version`); dependency versions are 
 
 ```bash
 uv sync --extra dev          # or: python -m venv .venv && pip install -e ".[dev]"
-uv run pytest
+uv run pytest                # or in parallel: OPENBLAS_NUM_THREADS=1 uv run pytest -n 6
 uv run ruff check src tests
 uv run ruff format --check src tests
 uv run mypy
