@@ -375,7 +375,7 @@ Deliver `Difference-in-Means & Difference-in-Proportions` without weakening desi
 
 ### Task 2.5: Regression-Adjusted Experiment Estimator
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -386,14 +386,21 @@ Deliver `Regression-Adjusted Experiment Estimator` without weakening design/iden
 - Preserve ITT interpretation and robust uncertainty.
 
 **Task-specific verification**
-- [ ] Adjustment improves precision on prognostic fixture without biasing truth.
+- [x] Adjustment improves precision on prognostic fixture without biasing truth.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/estimators/ols.py` (`ols_hc2`: transparent OLS with HC2 covariance), `src/causalimpact/experiments/regression.py` (`RegressionAdjustedITT`, `covariate_matrix`).
+- Lin (2013) estimator: outcome on assignment, mean-centred pre-treatment covariates and assignment × covariate interactions; categoricals one-hot encoded; missing covariates only under the `indicator` policy. Targets ITT only; post-treatment / review-required covariates and the outcome itself are refused; rank-deficient designs raise.
+- Variance targets the population ITT: HC2 variance of the assignment coefficient plus g′S_xg/n for estimating the centring means. Found during verification: HC2 alone under-covered (0.875) with heterogeneous effects; after the fix coverage was 0.93–0.97 across seeds.
+- Tests: `tests/unit/experiments/test_regression.py` (HC2 without covariates equals the Neyman variance; coefficient equals direct least squares; SE < half of unadjusted on a prognostic fixture; refusals; simulations with homogeneous and heterogeneous effects: unbiased, coverage in [0.92, 0.98], variance < 25% of difference in means). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none (ITT preserved).
 
 ---
 
@@ -1688,11 +1695,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 4 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 5 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **11** |
+| **Total** | **65** | **51** | **14** | **12** |
