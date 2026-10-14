@@ -1409,7 +1409,7 @@ Deliver `Policy / Targeting Value Evaluation` without weakening design/identific
 
 ### Task 6.1: Core Causal Analysis Service
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1420,14 +1420,21 @@ Deliver `Core Causal Analysis Service` without weakening design/identification b
 - Fail closed when required diagnostics block interpretation.
 
 **Task-specific verification**
-- [ ] Happy path and blocked path integration tests.
+- [x] Happy path and blocked path integration tests.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/services/analysis.py` (`AnalysisService`, `DiagnosticStep`, `AnalysisResult`, `InterpretationStatus`, `interpret`); reusable end-to-end scenarios in `tests/integration/scenarios.py`.
+- Orchestration order: re-run design readiness (must be AnalysisReady and still valid) → resolve the design's estimand from the registry → dataset content hash and a pinned `AnalysisRun` (estimator definition, diagnostics, seed, confidence level, code version) → trust diagnostics → `run_estimator` → `AnalysisResult` artifact (run + fingerprint, design, estimand, estimate, diagnostics, interpretation, reasons, assumptions, limitations).
+- Fail closed: if any required diagnostic is blocking, estimation is withheld and the interpretation is "Causal interpretation not supported". Optional blocking diagnostics, warnings or assumptions with diagnostic concerns downgrade to "Suggestive". Estimator failures mark the run `failed` with the reason. Untestable assumptions are always listed as limitations. Interpretation labels are exactly the three in REPORTING_STANDARD.md.
+- Tests: `tests/integration/test_analysis_service.py` (RCT happy path; SRM blocks and withholds the estimate; optional warning → suggestive; observational AIPW happy path; poor overlap blocks; estimator failure recorded on the run; non-ready design refused; identical inputs give identical fingerprints and estimates). Suite passed; ruff and mypy strict clean. Also added pytest-xdist for parallel runs (separate commit).
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1849,9 +1856,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 7 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **34** |
+| **Total** | **65** | **51** | **14** | **35** |
