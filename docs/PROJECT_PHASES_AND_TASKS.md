@@ -1305,7 +1305,7 @@ Deliver `Pre-Specified Subgroup Effects` without weakening design/identification
 
 ### Task 5.5: Exploratory Heterogeneity Guardrails
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1316,14 +1316,20 @@ Deliver `Exploratory Heterogeneity Guardrails` without weakening design/identifi
 - Require holdout/cross-fitting or honest labeling of exploratory status.
 
 **Task-specific verification**
-- [ ] Report labels exploratory results correctly.
+- [x] Report labels exploratory results correctly.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/heterogeneity/exploratory.py` (`ExplorationConfig`, `candidate_subgroups`, `explore_subgroups`, `ExploratoryReport`, `ExploratoryFinding`); `EvidenceLabel` in `subgroups.py`, and pre-declared `SubgroupReport`s now carry `evidence_label = confirmatory`.
+- Labels: `confirmatory` only for pre-declared plans (Task 5.4); `exploratory_holdout_validated` when subgroups are selected on a seeded discovery split and re-estimated on the untouched holdout (multiplicity-adjusted across the selected subgroups); `exploratory_unvalidated` when no holdout is used (hypothesis-generating, selection-biased). Discovery estimates are kept for transparency but never reported as evidence. Exploration variables must be known pre-treatment; candidates are categorical levels and numeric median splits; small or unestimable candidates cannot be selected.
+- Tests: `tests/unit/heterogeneity/test_exploratory.py` (candidate enumeration; holdout and no-holdout labels and notes, never confirmatory; true heterogeneity recovered and significant on the holdout; seeded reproducibility; post-treatment variable refused; null simulation: selected subgroups' discovery deviation is > 1.5× their holdout deviation, i.e. the holdout removes selection inflation). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1844,8 +1850,8 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
-| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 3 |
+| 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **33** |
+| **Total** | **65** | **51** | **14** | **34** |

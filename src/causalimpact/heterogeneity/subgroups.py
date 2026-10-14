@@ -15,6 +15,7 @@ exclusive a Cochran Q test of effect homogeneity is reported.
 from __future__ import annotations
 
 from datetime import datetime
+from enum import StrEnum
 from typing import Self
 
 import numpy as np
@@ -29,6 +30,12 @@ from causalimpact.domain.types import AwareDatetime, NonBlankStr
 from causalimpact.domain.variables import CovariateSpec, Eligibility, classify_covariate
 from causalimpact.estimators.base import Estimator, run_estimator
 from causalimpact.experiments.decision import CorrectionMethod, adjust_p_values
+
+
+class EvidenceLabel(StrEnum):
+    CONFIRMATORY = "confirmatory"
+    EXPLORATORY_HOLDOUT_VALIDATED = "exploratory_holdout_validated"
+    EXPLORATORY_UNVALIDATED = "exploratory_unvalidated"
 
 
 class SubgroupDefinition(BaseModel):
@@ -106,6 +113,7 @@ class SubgroupReport(BaseModel):
     correction: CorrectionMethod
     results: tuple[SubgroupResult, ...]
     homogeneity: dict[str, JsonValue]
+    evidence_label: EvidenceLabel = EvidenceLabel.CONFIRMATORY
 
 
 def subgroup_estimand(estimand: Estimand, subgroup: SubgroupDefinition) -> Estimand:

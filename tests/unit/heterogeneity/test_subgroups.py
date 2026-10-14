@@ -62,6 +62,7 @@ def test_only_declared_subgroups_with_derived_estimands(rng: np.random.Generator
     assert mobile.estimate is not None
     assert mobile.estimate.estimand_type is ITT.type
     assert mobile.estimate.estimate == pytest.approx(1.0, abs=0.15)
+    assert report.evidence_label == "confirmatory"  # pre-declared plan
 
 
 def test_multiplicity_adjustment_matches_reference(rng: np.random.Generator) -> None:
