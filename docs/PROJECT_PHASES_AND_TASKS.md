@@ -437,7 +437,7 @@ Deliver `CUPED / Pre-Period Variance Reduction` without weakening design/identif
 
 ### Task 2.7: Power, MDE & Sample Size Engine
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -448,14 +448,21 @@ Deliver `Power, MDE & Sample Size Engine` without weakening design/identificatio
 - Keep planning calculations separate from post-hoc inference.
 
 **Task-specific verification**
-- [ ] Reference examples match tolerance.
+- [x] Reference examples match tolerance.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/experiments/power.py` (`PowerInputs`, `MetricType`, `power`, `sample_size`, `minimum_detectable_effect`, `standard_error`, `SampleSize`).
+- Continuous and binary (unpooled) metrics, any treated fraction, two-sided α, optional pre-declared variance reduction (CUPED / adjustment). Binary MDE is solved numerically because the variance depends on the effect.
+- Planning is separate from inference: inputs are assumed parameters only; no function accepts an observed estimate and no "observed power" is offered.
+- Tests: `tests/unit/experiments/test_power.py` (Cohen d = 0.5 → 63 per arm; 10%→12% → 3839 per arm; power at planned n ≈ 0.80; size = α; MDE and sample size invert each other; allocation and variance-reduction scaling; validation; simulations confirm the planned 80% power is achieved by the actual difference-in-means and difference-in-proportions estimators). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1702,11 +1709,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 6 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 7 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **13** |
+| **Total** | **65** | **51** | **14** | **14** |
