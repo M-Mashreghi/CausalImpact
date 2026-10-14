@@ -20,6 +20,7 @@ from causalimpact.simulation.dgp import (
     SimulationConfig,
     simulate,
 )
+from causalimpact.simulation.stress import StressPoint, overlap_sweep
 
 __all__ = [
     "BenchmarkCase",
@@ -31,9 +32,11 @@ __all__ = [
     "RCTConfig",
     "SimulatedDataset",
     "SimulationConfig",
+    "StressPoint",
     "bias_within_tolerance",
     "check_coverage",
     "coverage_summary",
+    "overlap_sweep",
     "run_benchmark",
     "simulate",
 ]

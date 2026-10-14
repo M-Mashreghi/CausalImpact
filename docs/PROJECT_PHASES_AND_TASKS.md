@@ -1716,7 +1716,7 @@ Deliver `Confidence Interval Coverage Benchmark` without weakening design/identi
 
 ### Task 7.4: Poor-Overlap & Extreme-Weight Stress Tests
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1727,14 +1727,20 @@ Deliver `Poor-Overlap & Extreme-Weight Stress Tests` without weakening design/id
 - Verify diagnostics activate before silent catastrophic extrapolation.
 
 **Task-specific verification**
-- [ ] Severe overlap fixture triggers block/warning.
+- [x] Severe overlap fixture triggers block/warning.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/simulation/stress.py` (`overlap_sweep`, `StressPoint`).
+- Sweeps confounding strength on the observational DGP. Per replicate: overlap diagnostic status (propensity separation counts as blocking), estimator refusal, error versus truth, catastrophic-error flag (absolute error threshold). Per strength: status counts, refusals, failures, bias, RMSE, max error, catastrophic count and the safety metric `n_catastrophic_unflagged` (catastrophic errors on replicates whose overlap check passed).
+- Tests: `tests/simulation/test_stress.py` (guarded IPW: mild overlap passes with no refusals, severe overlap blocks ≥ 90% of replicates and refuses ≥ 90%, refusal rate increases monotonically; unguarded IPW with refusal disabled does break down, yet no catastrophic error occurs on a replicate with a passing overlap diagnostic, and RMSE grows > 3× from mild to severe). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1911,7 +1917,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 10 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 11 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
@@ -1919,4 +1925,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **44** |
+| **Total** | **65** | **51** | **14** | **45** |
