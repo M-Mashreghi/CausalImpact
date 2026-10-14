@@ -30,6 +30,16 @@ Draft → Validated → AnalysisReady → Estimated → Reviewed → Reported
 
 `AnalysisReady` should fail closed when core fields are missing.
 
+Implemented by `causalimpact.design.DesignReadinessValidator`. Required for every family:
+assignment mechanism, time zero, estimand, interference assessment, missingness plan,
+inference unit, sensitivity plan and primary analysis, plus every family assumption from
+`ASSUMPTION_CATALOG`, each with a justification and none marked violated. Additionally:
+
+- randomized experiments: `randomization_unit`; a randomization unit that differs from the
+  analysis unit requires a `cluster_variable`;
+- observational studies: registered DAG and adjustment set that pass the backdoor check
+  with no flagged variables, and overlap expectations.
+
 ## Observational study rule
 
 Estimator selection follows identification. A propensity model is not a substitute for causal design.

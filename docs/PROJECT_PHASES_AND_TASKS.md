@@ -182,7 +182,7 @@ Deliver `Causal DAG & Adjustment-Set Registry` without weakening design/identifi
 
 ### Task 1.6: Assumption Registry & Design Validation
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -193,15 +193,22 @@ Deliver `Assumption Registry & Design Validation` without weakening design/ident
 - Implement AnalysisReady validation that fails closed for missing identification fields.
 
 **Task-specific verification**
-- [ ] Incomplete design cannot become AnalysisReady.
-- [ ] Assumptions survive serialization.
+- [x] Incomplete design cannot become AnalysisReady.
+- [x] Assumptions survive serialization.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/domain/assumptions.py` (`Assumption`, `Testability`, `AssumptionStatus`), `src/causalimpact/design/assumption_catalog.py` (required assumptions per design family from CAUSAL_ASSUMPTIONS.md), `src/causalimpact/design/readiness.py` (`DesignReadinessValidator`), `src/causalimpact/domain/types.py` (shared constrained types, split out to avoid a domain import cycle). `StudyDesign` gains `assumptions` and `randomization_unit`.
+- Assumption status has no "proven" value: only assumed / diagnostic support / diagnostic concern / violated. Conditional exchangeability and parallel trends are catalogued as untestable.
+- `DesignReadinessValidator` is the `ReadinessCheck` for AnalysisReady and reports every blocking problem at once: missing common and family-specific fields, undeclared/unjustified/violated required assumptions, unregistered or mismatched estimand (treatment, outcome, population; ITT only for randomized designs), unregistered DAG/adjustment set, unsafe adjustment variables, backdoor failure, forbidden post-treatment variables in the set, and randomization unit ≠ analysis unit without a cluster variable.
+- Tests: `tests/unit/design/test_readiness.py` (complete RCT/observational/panel designs promote; every required field, every required assumption and each reference failure blocks; assumptions survive JSON round-trip). Suite: 267 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: assumptions are now explicit per family (documented above); no estimand change.
 
 ---
 
@@ -1644,7 +1651,7 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
-| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 5 |
+| 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 6 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 0 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
@@ -1652,4 +1659,4 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **5** |
+| **Total** | **65** | **51** | **14** | **6** |

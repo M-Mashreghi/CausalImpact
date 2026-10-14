@@ -16,37 +16,16 @@ The structured identification checks are supplied by design validation (Task 1.6
 from __future__ import annotations
 
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, Self
+from typing import Self
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from causalimpact.domain.assumptions import Assumption
 from causalimpact.domain.errors import DesignNotReadyError, IllegalTransitionError
 from causalimpact.domain.ids import DesignId, new_design_id
-
-
-def _non_blank(value: str) -> str:
-    stripped = value.strip()
-    if not stripped:
-        raise ValueError("must not be blank")
-    return stripped
-
-
-NonBlankStr = Annotated[str, AfterValidator(_non_blank)]
-
-
-def _aware(value: datetime) -> datetime:
-    if value.tzinfo is None or value.utcoffset() is None:
-        raise ValueError("timestamps must be timezone-aware")
-    return value
-
-
-AwareDatetime = Annotated[datetime, AfterValidator(_aware)]
-
-
-def utc_now() -> datetime:
-    return datetime.now(UTC)
+from causalimpact.domain.types import AwareDatetime, NonBlankStr, utc_now
 
 
 class DesignFamily(StrEnum):
@@ -142,6 +121,7 @@ class StudyDesign(BaseModel):
 
     # Identification / planning fields (required for AnalysisReady, see Task 1.6).
     assignment_mechanism: NonBlankStr | None = None
+    randomization_unit: NonBlankStr | None = None
     time_zero: NonBlankStr | None = None
     estimand_id: NonBlankStr | None = None
     dag_version: NonBlankStr | None = None
@@ -155,6 +135,7 @@ class StudyDesign(BaseModel):
     sensitivity_plan: NonBlankStr | None = None
     primary_analysis: NonBlankStr | None = None
     secondary_analyses: tuple[NonBlankStr, ...] = ()
+    assumptions: tuple[Assumption, ...] = ()
 
     @model_validator(mode="after")
     def _treatment_outcome_distinct(self) -> Self:
@@ -162,6 +143,9 @@ class StudyDesign(BaseModel):
             raise ValueError("treatment and outcome must be different variables")
         if self.treatment in self.forbidden_post_treatment_variables:
             raise ValueError("treatment cannot be listed as a post-treatment variable")
+        keys = [a.key for a in self.assumptions]
+        if len(keys) != len(set(keys)):
+            raise ValueError("assumption keys must be unique")
         return self
 
     def transition(

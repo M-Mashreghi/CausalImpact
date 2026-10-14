@@ -16,12 +16,8 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from causalimpact.domain.errors import DesignNotReadyError, IllegalTransitionError
 from causalimpact.domain.ids import DesignId, RunId, new_run_id
-from causalimpact.domain.study_design import (
-    AwareDatetime,
-    NonBlankStr,
-    StudyDesign,
-    utc_now,
-)
+from causalimpact.domain.study_design import StudyDesign
+from causalimpact.domain.types import AwareDatetime, NonBlankStr, utc_now
 
 
 class RunStatus(StrEnum):

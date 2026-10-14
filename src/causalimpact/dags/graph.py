@@ -25,7 +25,7 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from causalimpact.domain.study_design import NonBlankStr
+from causalimpact.domain.types import NonBlankStr
 
 MAX_EXPLAINED_PATHS = 50
 

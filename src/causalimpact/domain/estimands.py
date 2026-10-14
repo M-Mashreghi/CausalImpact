@@ -16,7 +16,8 @@ from typing import Self
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, TypeAdapter, model_validator
 
 from causalimpact.domain.errors import DomainError
-from causalimpact.domain.study_design import NonBlankStr, TargetPopulation
+from causalimpact.domain.study_design import TargetPopulation
+from causalimpact.domain.types import NonBlankStr
 
 
 class EstimandType(StrEnum):

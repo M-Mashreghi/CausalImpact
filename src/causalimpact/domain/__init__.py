@@ -1,6 +1,7 @@
 """Canonical domain models: StudyDesign, AnalysisRun, estimands and assumptions."""
 
 from causalimpact.domain.analysis_run import ALLOWED_RUN_TRANSITIONS, AnalysisRun, RunStatus
+from causalimpact.domain.assumptions import Assumption, AssumptionStatus, Testability
 from causalimpact.domain.errors import DesignNotReadyError, DomainError, IllegalTransitionError
 from causalimpact.domain.estimands import (
     ESTIMAND_SUBPOPULATION,
@@ -46,6 +47,8 @@ __all__ = [
     "ANALYZABLE_STATUSES",
     "ESTIMAND_SUBPOPULATION",
     "AnalysisRun",
+    "Assumption",
+    "AssumptionStatus",
     "CovariateDType",
     "CovariateSpec",
     "DataContract",
@@ -72,6 +75,7 @@ __all__ = [
     "StatusChange",
     "StudyDesign",
     "TargetPopulation",
+    "Testability",
     "TreatmentBasis",
     "TreatmentKind",
     "TreatmentSpec",

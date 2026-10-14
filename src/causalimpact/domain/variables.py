@@ -19,7 +19,7 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from causalimpact.domain.study_design import NonBlankStr
+from causalimpact.domain.types import NonBlankStr
 
 
 class TriState(StrEnum):
