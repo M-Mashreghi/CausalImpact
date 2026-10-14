@@ -249,7 +249,7 @@ Deliver `Dataset Versioning, Seeds & Reproducible Run Identity` without weakenin
 
 ### Task 2.1: Experiment Assignment & Logging Integrity
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -260,15 +260,22 @@ Deliver `Experiment Assignment & Logging Integrity` without weakening design/ide
 - Detect duplicates/cross-arm contamination where possible.
 
 **Task-specific verification**
-- [ ] Clean fixture passes.
-- [ ] Corrupted assignment/exposure fixtures fail.
+- [x] Clean fixture passes.
+- [x] Corrupted assignment/exposure fixtures fail.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/experiments/spec.py` (`ExperimentSpec`, `Arm`, `MonitoringPolicy` — experiment metadata from DATA_CONTRACT.md with separate randomization/analysis unit columns), `src/causalimpact/experiments/integrity.py` (`check_assignment_integrity`), `src/causalimpact/diagnostics/base.py` (shared `DiagnosticResult` / `Finding` with pass / warning / blocking status, reused by later diagnostics).
+- Blocking findings: missing columns, missing assignment fields, unknown arms, units assigned to more than one arm, exposure without assignment, cross-arm exposure, exposure before assignment, duplicate analysis units, analysis units mapped to several randomization units, analysis rows without a valid assignment, analysis arm ≠ assigned arm (ITT analyses units as assigned).
+- Warnings (visible, not dropped): duplicate assignment log rows with the same arm; assigned units missing from analysis (handed to attrition diagnostics, Task 2.10). A note requires clustered inference when the analysis unit is finer than the randomization unit. Nothing is repaired or filtered.
+- Tests: `tests/unit/experiments/test_integrity.py` (clean user-level and household-cluster fixtures pass; 9 corrupted fixtures each block with the expected code). Suite: 315 passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1660,11 +1667,11 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | Phase | Tasks | Core | Advanced | Completed |
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
-| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 0 |
+| 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 1 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 0 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 0 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 0 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **7** |
+| **Total** | **65** | **51** | **14** | **8** |
