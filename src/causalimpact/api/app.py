@@ -20,6 +20,8 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
+from causalimpact.config.observability import log_event
+from causalimpact.config.settings import Settings
 from causalimpact.dags import AdjustmentSet, CausalDAG, DagRegistry
 from causalimpact.design import DesignReadinessValidator
 from causalimpact.domain import (
@@ -31,6 +33,7 @@ from causalimpact.domain import (
     StudyDesign,
 )
 from causalimpact.services.analysis import AnalysisResult, AnalysisService
+from causalimpact.services.registry import AnalysisRegistry
 from causalimpact.services.run_spec import RunSpec, execute
 
 logger = logging.getLogger("causalimpact.api")
@@ -78,6 +81,8 @@ class VersionResponse(BaseModel):
 
 @dataclass
 class ApiState:
+    settings: Settings = field(default_factory=Settings)
+    registry: AnalysisRegistry | None = None
     estimands: EstimandRegistry = field(default_factory=EstimandRegistry)
     dags: DagRegistry = field(default_factory=DagRegistry)
     designs: dict[str, StudyDesign] = field(default_factory=dict)
@@ -112,7 +117,13 @@ def create_app(state: ApiState | None = None) -> FastAPI:
     @app.exception_handler(Exception)
     async def unexpected(_: Request, exc: Exception) -> JSONResponse:
         error_id = uuid.uuid4().hex
-        logger.exception("unhandled error %s", error_id, exc_info=exc)
+        log_event(
+            logger,
+            "unhandled_error",
+            level=logging.ERROR,
+            error_id=error_id,
+            error_type=type(exc).__name__,
+        )
         body = ErrorBody(
             error="internal_error", detail="unexpected server error", error_id=error_id
         )
@@ -120,7 +131,24 @@ def create_app(state: ApiState | None = None) -> FastAPI:
 
     @app.get("/health")
     def health() -> dict[str, Literal["ok"]]:
+        """Liveness: the process is up."""
         return {"status": "ok"}
+
+    @app.get("/ready")
+    def ready() -> JSONResponse:
+        """Readiness: dependencies are reachable. Never returns configuration values."""
+        components: dict[str, str] = {}
+        if state.registry is None:
+            components["registry"] = "not_configured"
+        else:
+            components["registry"] = "ok" if state.registry.ping() else "unavailable"
+        is_ready = all(v in ("ok", "not_configured") for v in components.values())
+        body = {
+            "status": "ready" if is_ready else "not_ready",
+            "environment": state.settings.env,
+            "components": components,
+        }
+        return JSONResponse(status_code=200 if is_ready else 503, content=body)
 
     @app.post("/estimands", status_code=201)
     def register_estimand(estimand: Estimand) -> Estimand:

@@ -64,6 +64,14 @@ class AnalysisRegistry:
     def _connect(self) -> sqlite3.Connection:
         return sqlite3.connect(self.path)
 
+    def ping(self) -> bool:
+        try:
+            with self._connect() as db:
+                db.execute("SELECT 1").fetchone()
+        except sqlite3.Error:
+            return False
+        return True
+
     # -- design artefacts ---------------------------------------------------------
 
     def save_design(self, design: StudyDesign) -> None:

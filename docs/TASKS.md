@@ -77,7 +77,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 
 ## Phase 8 — Hardening, CI/CD & Operations
 - [x] **Task 8.1** — End-to-End Regression Suite (`Core`)
-- [ ] **Task 8.2** — Observability & Health Checks (`Core`)
+- [x] **Task 8.2** — Observability & Health Checks (`Core`)
 - [ ] **Task 8.3** — Dockerization & Demo Stack (`Core`)
 - [ ] **Task 8.4** — GitHub Actions CI & Research Gates (`Core`)
 - [ ] **Task 8.5** — Operational Runbook, Security & Release Checklist (`Core`)

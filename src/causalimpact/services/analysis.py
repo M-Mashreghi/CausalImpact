@@ -16,6 +16,8 @@ The API and dashboard call this service; they contain no causal computation.
 
 from __future__ import annotations
 
+import logging
+import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -24,6 +26,7 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict
 
 import causalimpact
+from causalimpact.config.observability import log_event
 from causalimpact.dags import DagRegistry
 from causalimpact.design.readiness import DesignReadinessValidator
 from causalimpact.diagnostics.base import DiagnosticResult, DiagnosticStatus
@@ -34,6 +37,8 @@ from causalimpact.domain.estimands import EffectEstimate, Estimand, EstimandRegi
 from causalimpact.domain.study_design import StudyDesign
 from causalimpact.estimators.base import Estimator, run_estimator
 from causalimpact.ingestion.dataset_version import dataset_version
+
+logger = logging.getLogger("causalimpact.services.analysis")
 
 
 class InterpretationStatus(StrEnum):
@@ -130,6 +135,17 @@ class AnalysisService:
             config={"estimator_definition": repr(estimator), "diagnostics": names},
             code_version=causalimpact.__version__,
         ).transition(RunStatus.RUNNING)
+        started = time.perf_counter()
+        log_event(
+            logger,
+            "analysis_run_started",
+            run_id=run.run_id,
+            design_id=design.design_id,
+            estimand_id=estimand.estimand_id,
+            estimator=estimator.name,
+            dataset_version=run.dataset_version,
+            n_rows=len(data),
+        )
 
         results = tuple(step.check(data) for step in diagnostics)
         required = {d.name for d in diagnostics if d.required}
@@ -155,6 +171,15 @@ class AnalysisService:
         if blocked:
             reasons.append("estimation withheld: fail-closed on blocking required diagnostics")
 
+        log_event(
+            logger,
+            "analysis_run_finished",
+            run_id=run.run_id,
+            status=run.status.value,
+            interpretation=status.value,
+            blocked_diagnostics=sorted(blocked),
+            duration_ms=round((time.perf_counter() - started) * 1000, 1),
+        )
         limitations = [
             f"untestable assumption: {a.key} ({a.statement})"
             for a in design.assumptions

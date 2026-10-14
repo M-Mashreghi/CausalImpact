@@ -1833,7 +1833,7 @@ Deliver `End-to-End Regression Suite` without weakening design/identification bo
 
 ### Task 8.2: Observability & Health Checks
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Core`
 
 **Purpose**  
@@ -1844,14 +1844,20 @@ Deliver `Observability & Health Checks` without weakening design/identification 
 - Scrub sensitive data.
 
 **Task-specific verification**
-- [ ] Health and log-scrub tests.
+- [x] Health and log-scrub tests.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/config/settings.py` (`Settings.from_env`: env, DB URL, log level), `src/causalimpact/config/observability.py` (`configure_logging`, `log_event`, `JsonFormatter`, `ScrubFilter`, `scrub`, `scrub_text`); the analysis service logs `analysis_run_started` / `analysis_run_finished` (run id, design, estimand, estimator, dataset version, row count, status, interpretation, blocked diagnostics, duration; no data values); the API adds `GET /ready` (registry reachability; 503 when unavailable; returns environment and component status only, never configuration values) next to `GET /health`, and logs unhandled errors as structured events with the error id and type only. `AnalysisRegistry.ping()` added; `.env.example` gains `CAUSALIMPACT_LOG_LEVEL`.
+- Scrubbing: sensitive keys at any nesting depth (password, secret, token, API key, authorization, cookie, credentials, DB URL / DSN), key=value pairs and bearer tokens in free text, and user:password credentials in URLs are redacted before formatting; exceptions are logged by type only.
+- Tests: `tests/integration/test_observability.py` (five secret patterns scrubbed; nested field scrubbing; JSON log records; run lifecycle events; health and readiness with and without a registry, no leakage of the DB path; unavailable registry → 503; settings from env; logging configuration). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1933,10 +1939,10 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 |---|---:|---:|---:|---:|
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 12 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 17 |
-| 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 1 |
+| 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 2 |
 | 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 13 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 0 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 0 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 0 |
-| **Total** | **65** | **51** | **14** | **47** |
+| **Total** | **65** | **51** | **14** | **48** |
