@@ -23,11 +23,17 @@ from causalimpact.observational.overlap import check_overlap
 from causalimpact.observational.propensity import estimate_propensity
 from causalimpact.panel.event_study import twfe_event_study
 from causalimpact.panel.pre_trends import check_pre_trends
+from causalimpact.panel.synthetic_control import (
+    SyntheticControl,
+    fit_synthetic,
+    synthetic_control_diagnostic,
+)
 from causalimpact.services.analysis import AnalysisResult, AnalysisService, DiagnosticStep
 from causalimpact.services.estimator_factory import (
     AIPWConfig,
     EstimatorConfig,
     SingleCohortDiDConfig,
+    SyntheticControlConfig,
     WeightingConfig,
     build_estimator,
 )
@@ -88,6 +94,15 @@ def build_diagnostics(spec: RunSpec, estimand: Estimand) -> list[DiagnosticStep]
             return check_pre_trends(twfe_event_study(df, panel))
 
         steps.append(DiagnosticStep("pre_trends", pre_trends))
+    if isinstance(config, SyntheticControlConfig):
+        estimator = SyntheticControl(config.panel, min_donors=config.min_donors)
+
+        def sc_fit(df: pd.DataFrame) -> DiagnosticResult:
+            wide, treated, t0, donors, dropped = estimator.prepare(df)
+            fit = fit_synthetic(wide, treated, donors, t0)
+            return synthetic_control_diagnostic(fit, donors, dropped, config.min_donors)
+
+        steps.append(DiagnosticStep("synthetic_control_fit", sc_fit))
     return steps
 
 

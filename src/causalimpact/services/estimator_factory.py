@@ -22,6 +22,7 @@ from causalimpact.observational.weighting import WeightingEstimator, WeightSchem
 from causalimpact.panel.contract import PanelSpec
 from causalimpact.panel.did import TwoPeriodDiD
 from causalimpact.panel.multi_period import ComparisonGroup, SingleCohortDiD
+from causalimpact.panel.synthetic_control import SyntheticControl
 
 
 class _Base(BaseModel):
@@ -83,7 +84,15 @@ class SingleCohortDiDConfig(BaseModel):
     comparison: ComparisonGroup = ComparisonGroup.NEVER_TREATED
 
 
-PanelEstimatorConfig = TwoPeriodDiDConfig | SingleCohortDiDConfig
+class SyntheticControlConfig(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    kind: Literal["synthetic_control"] = "synthetic_control"
+    panel: PanelSpec = Field(default_factory=PanelSpec)
+    min_donors: int = Field(default=5, ge=2)
+
+
+PanelEstimatorConfig = TwoPeriodDiDConfig | SingleCohortDiDConfig | SyntheticControlConfig
 
 EstimatorConfig = Annotated[
     DifferenceInMeansConfig
@@ -94,7 +103,8 @@ EstimatorConfig = Annotated[
     | WeightingConfig
     | OutcomeRegressionConfig
     | TwoPeriodDiDConfig
-    | SingleCohortDiDConfig,
+    | SingleCohortDiDConfig
+    | SyntheticControlConfig,
     Field(discriminator="kind"),
 ]
 
@@ -127,4 +137,6 @@ def build_estimator(config: EstimatorConfig, *, seed: int) -> Estimator:
             return TwoPeriodDiD(config.panel, config.pre_period, config.post_period)
         case SingleCohortDiDConfig():
             return SingleCohortDiD(config.panel, config.comparison)
+        case SyntheticControlConfig():
+            return SyntheticControl(config.panel, min_donors=config.min_donors)
     raise ValueError(f"unsupported estimator configuration: {config!r}")

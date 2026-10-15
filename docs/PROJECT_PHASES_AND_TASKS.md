@@ -1139,7 +1139,7 @@ Deliver `Heterogeneity-Robust Dynamic Event Study` without weakening design/iden
 
 ### Task 4.9: Synthetic Control & Donor-Pool Diagnostics
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Advanced`
 
 **Purpose**  
@@ -1150,14 +1150,22 @@ Deliver `Synthetic Control & Donor-Pool Diagnostics` without weakening design/id
 - Report donor weights, pre-fit RMSE and donor-pool provenance.
 
 **Task-specific verification**
-- [ ] Known synthetic-control fixture reproduces pre-period fit.
+- [x] Known synthetic-control fixture reproduces pre-period fit.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/synthetic_control.py` (`SyntheticControl` estimator, `fit_synthetic`, `synthetic_weights`, `in_space_placebos`, `synthetic_control_diagnostic`, `SyntheticFit`); `SyntheticControlConfig` in the estimator factory and a required `synthetic_control_fit` diagnostic in `RunSpec`, so poor fit or a small donor pool withholds the estimate.
+- Method: one treated unit (exactly one unit with a treatment start); donors are never-treated units with complete outcomes (incomplete ones are excluded and listed). Convex donor weights minimise pre-period squared error, solved exactly by active-set NNLS with the sum-to-one constraint as a heavily weighted row (SLSQP proved unreliable and projected gradient too slow during verification). Estimand: the treated unit's ATT averaged over post periods; per-period treated / synthetic / gap path reported.
+- Inference: in-space placebos; p-value = rank of the treated unit's post/pre RMSPE ratio (minimum attainable 1/(J+1) reported); interval = estimate ± the confidence-level quantile of |placebo ATT| among placebos with pre-RMSPE ≤ 5× the treated unit's, falling back to all placebos (conservative, recorded) when fewer than five qualify.
+- Diagnostics: donor pool < 5 → blocking; pre-RMSPE > 1 × treated pre-period SD → blocking (> 0.5 → warning); excluded donors → warning; donor pool, weights and fit always recorded; spillover / no-similar-shock assumptions stated.
+- Tests: `tests/unit/panel/test_synthetic_control.py` (known convex mixture recovers weights 0.6/0.4, pre-fit and effect; exact toy weights; path and gaps; null effect rarely significant; poor fit and small pool blocking; multiple treated units refused; incomplete donors excluded; deterministic; interval excludes zero when placebos fit well) and `tests/integration/test_synthetic_control_service.py` (supported end to end; poor fit withholds the estimate). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none (ATT for the single treated unit).
 
 ---
 
@@ -1958,9 +1966,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 9 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 8 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 6 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 7 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 7 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 5 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 5 |
-| **Total** | **65** | **51** | **14** | **51** |
+| **Total** | **65** | **51** | **14** | **52** |
