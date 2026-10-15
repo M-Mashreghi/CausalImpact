@@ -24,16 +24,35 @@ from causalimpact.dashboard.adapters import (
 from causalimpact.services.analysis import AnalysisResult
 
 
+def resolve_result_path(raw: str) -> tuple[Path | None, str]:
+    """Accept a result.json path or a bundle folder; tolerate pasted quotes."""
+    path = Path(raw.strip().strip('"').strip("'"))
+    if path.is_dir():
+        path = path / "result.json"
+    if not path.is_file():
+        return None, f"No analysis result found at {path}."
+    return path, ""
+
+
 def main() -> None:
     st.title("CausalImpact diagnostics")
-    path = st.text_input("Path to an analysis result (JSON)", key="result_path")
-    if not path:
-        st.info("Enter the path of a saved analysis result.")
+    raw = st.text_input(
+        "Path to an analysis result: a result.json file or a bundle folder", key="result_path"
+    )
+    if not raw:
+        st.info("Enter the path of a saved analysis result or reproducibility bundle folder.")
+        return
+    path, problem = resolve_result_path(raw)
+    if path is None:
+        st.error(problem)
         return
     try:
-        result = AnalysisResult.model_validate_json(Path(path).read_text(encoding="utf-8"))
-    except (OSError, ValidationError) as exc:
-        st.error(f"Could not load the analysis result: {type(exc).__name__}")
+        result = AnalysisResult.model_validate_json(path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        st.error(f"Could not read {path}: {exc.strerror or type(exc).__name__}")
+        return
+    except ValidationError:
+        st.error(f"{path} is not a CausalImpact analysis result.")
         return
 
     run_id = result.run.run_id

@@ -111,3 +111,19 @@ def test_dashboard_smoke(rng: np.random.Generator, tmp_path: Path) -> None:
     assert not at.exception
     assert any(result.run.run_id in c.value for c in at.caption)
     assert at.subheader[0].value == result.interpretation.value
+
+
+def test_dashboard_accepts_bundle_folder_and_quoted_paths(
+    rng: np.random.Generator, tmp_path: Path
+) -> None:
+    s = rct(rng, n=300)
+    result = s.service.run(s.design, s.estimator, s.data, diagnostics=s.diagnostics, seed=1)
+    (tmp_path / "result.json").write_text(result.model_dump_json(), encoding="utf-8")
+    for entered in (str(tmp_path), f'"{tmp_path}"', f'"{tmp_path / "result.json"}"'):
+        at = AppTest.from_file(str(APP), default_timeout=60).run()
+        at.text_input(key="result_path").input(entered).run()
+        assert not at.exception and not at.error, entered
+        assert at.subheader[0].value == result.interpretation.value
+    at = AppTest.from_file(str(APP), default_timeout=60).run()
+    at.text_input(key="result_path").input(str(tmp_path / "missing")).run()
+    assert "No analysis result found" in at.error[0].value
