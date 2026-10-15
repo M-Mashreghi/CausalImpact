@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -64,6 +65,7 @@ def main() -> int:
     for name, (make, spec) in DEMOS.items():
         scenario = make(np.random.default_rng(args.seed))
         result = execute(scenario.service, scenario.design, spec, scenario.data)
+        shutil.rmtree(args.out / name, ignore_errors=True)  # this script's own output only
         bundle = export_bundle(result, spec, scenario.data, scenario.service, args.out / name)
         check = rerun_bundle(bundle)
         est = result.estimate

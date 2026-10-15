@@ -115,6 +115,11 @@ To keep the project finishable, these are documented but not mandatory in the ma
 - Docker
 - GitHub Actions
 
+## Try it locally
+
+See [docs/QUICKSTART.md](docs/QUICKSTART.md): install with `uv sync --extra dev`, run the
+tests, the demo analyses, the dashboard, the study designer and the API.
+
 ## Start with Claude Code
 
 ```text
