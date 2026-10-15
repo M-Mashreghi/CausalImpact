@@ -17,7 +17,7 @@ SPEC = RunSpec(estimator=SyntheticControlConfig(), seed=1)
 def test_synthetic_control_end_to_end(rng: np.random.Generator) -> None:
     s = panel_policy(rng)
     result = execute(s.service, s.design, SPEC, panel(rng, own_sd=0.0, noise=0.1))
-    assert [d.name for d in result.diagnostics] == ["synthetic_control_fit"]
+    assert [d.name for d in result.diagnostics] == ["synthetic_control_fit", "placebo_in_space"]
     assert result.estimate is not None and result.estimate.estimator == "synthetic_control"
     assert result.interpretation is InterpretationStatus.SUPPORTED
 
@@ -29,3 +29,14 @@ def test_poor_fit_withholds_the_estimate(rng: np.random.Generator) -> None:
     result = execute(s.service, s.design, SPEC, data)
     assert result.interpretation is InterpretationStatus.NOT_SUPPORTED
     assert result.estimate is None
+
+
+def test_placebos_downgrade_a_null_effect_to_suggestive(rng: np.random.Generator) -> None:
+    s = panel_policy(rng)
+    spec = RunSpec(estimator=SyntheticControlConfig(placebo_period=9), seed=1)
+    result = execute(s.service, s.design, spec, panel(rng, effect=0.0, noise=0.3))
+    names = [d.name for d in result.diagnostics]
+    assert names == ["synthetic_control_fit", "placebo_in_space", "placebo_in_time"]
+    assert "effect_not_extreme_among_placebos" in result.diagnostics[1].codes()
+    assert result.estimate is not None  # placebos never withhold the estimate...
+    assert result.interpretation is InterpretationStatus.SUGGESTIVE  # ...but downgrade it

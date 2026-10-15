@@ -46,7 +46,7 @@ Status: `[ ]` Pending · `[-]` In Progress · `[x]` Completed
 - [ ] **Task 4.7** — Group-Time ATT for Staggered Adoption (`Advanced`)
 - [ ] **Task 4.8** — Heterogeneity-Robust Dynamic Event Study (`Advanced`)
 - [x] **Task 4.9** — Synthetic Control & Donor-Pool Diagnostics (`Advanced`)
-- [ ] **Task 4.10** — Placebo / Falsification Tests (`Advanced`)
+- [x] **Task 4.10** — Placebo / Falsification Tests (`Advanced`)
 
 ## Phase 5 — Sensitivity, Heterogeneity & Policy Value
 - [x] **Task 5.1** — Specification Robustness Runner (`Core`)

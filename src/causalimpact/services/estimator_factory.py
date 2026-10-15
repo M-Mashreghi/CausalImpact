@@ -90,6 +90,9 @@ class SyntheticControlConfig(BaseModel):
     kind: Literal["synthetic_control"] = "synthetic_control"
     panel: PanelSpec = Field(default_factory=PanelSpec)
     min_donors: int = Field(default=5, ge=2)
+    placebo_period: int | None = Field(
+        default=None, description="fake treatment period for the in-time placebo test"
+    )
 
 
 PanelEstimatorConfig = TwoPeriodDiDConfig | SingleCohortDiDConfig | SyntheticControlConfig

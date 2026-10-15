@@ -22,6 +22,7 @@ from causalimpact.experiments.srm import check_srm_from_assignments
 from causalimpact.observational.overlap import check_overlap
 from causalimpact.observational.propensity import estimate_propensity
 from causalimpact.panel.event_study import twfe_event_study
+from causalimpact.panel.placebo import in_space_placebo_test, in_time_placebo_test
 from causalimpact.panel.pre_trends import check_pre_trends
 from causalimpact.panel.synthetic_control import (
     SyntheticControl,
@@ -103,6 +104,20 @@ def build_diagnostics(spec: RunSpec, estimand: Estimand) -> list[DiagnosticStep]
             return synthetic_control_diagnostic(fit, donors, dropped, config.min_donors)
 
         steps.append(DiagnosticStep("synthetic_control_fit", sc_fit))
+
+        def placebo_space(df: pd.DataFrame) -> DiagnosticResult:
+            return in_space_placebo_test(df, config.panel)
+
+        # Placebos are falsification evidence: warnings downgrade the interpretation to
+        # "suggestive" but do not withhold the estimate.
+        steps.append(DiagnosticStep("placebo_in_space", placebo_space, required=False))
+        fake = config.placebo_period
+        if fake is not None:
+
+            def placebo_time(df: pd.DataFrame) -> DiagnosticResult:
+                return in_time_placebo_test(df, fake, config.panel)
+
+            steps.append(DiagnosticStep("placebo_in_time", placebo_time, required=False))
     return steps
 
 

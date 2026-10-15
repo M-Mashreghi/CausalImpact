@@ -1171,7 +1171,7 @@ Deliver `Synthetic Control & Donor-Pool Diagnostics` without weakening design/id
 
 ### Task 4.10: Placebo / Falsification Tests
 
-**Status:** `[ ]` Not Started  
+**Status:** `[x]` Completed  
 **Track:** `Advanced`
 
 **Purpose**  
@@ -1182,14 +1182,22 @@ Deliver `Placebo / Falsification Tests` without weakening design/identification 
 - Report placebo distribution without overclaiming significance.
 
 **Task-specific verification**
-- [ ] Null/treated synthetic fixtures produce expected rank behavior.
+- [x] Null/treated synthetic fixtures produce expected rank behavior.
 
 **Common DoD**
-- [ ] Implementation exists behind appropriate project contracts.
-- [ ] Relevant unit/integration/simulation tests pass.
-- [ ] Result provenance/configuration is persisted where applicable.
-- [ ] No hidden estimand/assumption change is introduced.
-- [ ] Documentation and `TASKS.md` are synchronized.
+- [x] Implementation exists behind appropriate project contracts.
+- [x] Relevant unit/integration/simulation tests pass.
+- [x] Result provenance/configuration is persisted where applicable.
+- [x] No hidden estimand/assumption change is introduced.
+- [x] Documentation and `TASKS.md` are synchronized.
+
+**Completion record**
+- Implementation: `src/causalimpact/panel/placebo.py` (`in_space_placebo_test`, `in_time_placebo_test`, `did_in_time_placebo`); `SyntheticControlConfig.placebo_period` and non-required `placebo_in_space` / `placebo_in_time` diagnostics in `RunSpec`.
+- In-space: every donor refit as pseudo-treated; reports the full placebo table (pre/post RMSPE, ratio, ATT, comparable-fit flag), the treated unit's rank, rank p-value and minimum attainable p-value. Warnings when the treated unit is not extreme (effect not distinguishable from untreated placebos) or when the donor count makes significance unattainable.
+- In-time: treatment moved to a fake date inside the pre-period using pre-treatment data only; synthetic control flags a placebo gap ≥ 0.5× the real effect, DiD flags a significant fake effect.
+- Placebos are falsification evidence: they never withhold an estimate but warnings downgrade the interpretation to "suggestive"; every result states that passing placebos does not prove the design.
+- Tests: `tests/unit/panel/test_placebo.py` (real effect ranks first with p = 1/21; null effect flagged ≥ 70% of the time and rank p-values roughly uniform; small pool flagged; in-time placebo quiet without, and flagged with, a pre-period break; fake date validation; DiD in-time placebo quiet under parallel trends and flagged with a pre-trend) and `tests/integration/test_synthetic_control_service.py` (null effect → estimate kept, interpretation suggestive). Suite passed; ruff and mypy strict clean.
+- Assumption/estimand changes: none.
 
 ---
 
@@ -1966,9 +1974,9 @@ Deliver `Operational Runbook, Security & Release Checklist` without weakening de
 | 1 Foundation, Causal Design & Reproducibility | 7 | 7 | 0 | 7 |
 | 2 Randomized Experiments & Product Experimentation | 12 | 9 | 3 | 9 |
 | 3 Observational Causal Inference & Double ML | 10 | 8 | 2 | 8 |
-| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 7 |
+| 4 Difference-in-Differences & Policy Evaluation | 10 | 6 | 4 | 8 |
 | 5 Sensitivity, Heterogeneity & Policy Value | 8 | 4 | 4 | 4 |
 | 6 API, Dashboard & Reproducible Workflow | 7 | 7 | 0 | 7 |
 | 7 Simulation Benchmarking & Research Validation | 6 | 5 | 1 | 5 |
 | 8 Hardening, CI/CD & Operations | 5 | 5 | 0 | 5 |
-| **Total** | **65** | **51** | **14** | **52** |
+| **Total** | **65** | **51** | **14** | **53** |
