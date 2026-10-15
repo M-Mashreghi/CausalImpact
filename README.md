@@ -52,6 +52,7 @@ graph, assumptions) and provide a dataset. CausalImpact then:
 | Decide whether to ship an A/B test | SRM + attrition checks, difference in means/proportions, CUPED or regression adjustment, guardrails with multiple-testing correction, ship / no-ship / inconclusive / blocked label | ITT |
 | Size an experiment before launch | power, MDE and sample-size engine (continuous or binary metrics, unequal allocation, CUPED gain) | planning only |
 | Evaluate a programme without randomisation | DAG-checked adjustment set, propensity scores, overlap diagnostics, matching, IPW / overlap weights, outcome regression, doubly robust AIPW | ATE / ATT / ATC / ATO |
+| Estimate the effect of a shock on a single unit (one country, region, firm) | synthetic control with in-space and in-time placebo tests (see [examples/iran_sanctions](examples/iran_sanctions)) | ATT of the treated unit |
 | Evaluate a policy rolled out at one point in time | panel validation, 2x2 and multi-period difference-in-differences, event study, pre-trend test, cluster-robust SEs | ATT |
 | Check how fragile a result is | pre-declared specification grid (every spec reported), trimming / truncation sensitivity, estimator comparison with estimand-compatibility checks | — |
 | Look for heterogeneous effects | pre-specified subgroups (confirmatory) vs. holdout-validated exploration (always labelled exploratory) | subgroup ITT/ATE |
@@ -70,6 +71,16 @@ uv run pytest -m "not simulation" -n 6            # tests (~1 min)
 uv run python scripts/demo_release.py              # 3 demo analyses -> artifacts/demo_release/
 uv run python examples/ab_test.py                  # a full A/B analysis in Python, prints the report
 ```
+
+Run your own study from a CSV file and a JSON study file (estimand, design, assumption
+justifications, estimator):
+
+```bash
+uv run python scripts/run_analysis.py --data my_data.csv --study my_study.json --out results/my_study
+```
+
+[`examples/iran_sanctions/study.json`](examples/iran_sanctions/study.json) is a complete
+study file to copy from.
 
 Interactive tools:
 
@@ -131,12 +142,11 @@ GET  /health, /ready                 liveness and readiness
 
 ## Status
 
-The full **Core** track is complete (51 of 65 planned tasks, 700+ tests, CI with
-known-truth research gates). Not yet implemented (**Advanced** track): cross-fitted
-double ML, heterogeneity-robust staggered DiD, synthetic control and placebo tests,
+The full **Core** track is complete, plus synthetic control and placebo tests (53 of 65
+planned tasks, 700+ tests, CI with known-truth research gates). Not yet implemented
+(**Advanced** track): cross-fitted double ML, heterogeneity-robust staggered DiD,
 sequential monitoring, clustered/ratio-metric experiment inference, CATE learners,
-unmeasured-confounding sensitivity. Questions about a single treated unit (for example
-one country) need synthetic control and are not yet supported reliably.
+unmeasured-confounding sensitivity.
 Progress: [docs/TASKS.md](docs/TASKS.md).
 
 ## Documentation

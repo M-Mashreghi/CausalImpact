@@ -1,0 +1,45 @@
+{
+  "estimand": {
+    "estimand_id": "att_iran_inflation_2012_2015",
+    "type": "ATT",
+    "treatment": "treatment_start",
+    "outcome": "outcome",
+    "target_population": {
+      "name": "Iran",
+      "description": "Islamic Republic of Iran, 2012-2015",
+      "inclusion_criteria": ["the single treated unit"]
+    },
+    "description": "Average gap between Iran's annual CPI inflation (percentage points) and a synthetic Iran without the 2012 sanctions tightening, 2012-2015"
+  },
+  "design": {
+    "title": "2012 sanctions tightening and inflation in Iran",
+    "research_question": "How much did the 2012 tightening of international sanctions on Iran (EU oil embargo, central-bank sanctions) change Iran's annual CPI inflation in 2012-2015?",
+    "design_family": "panel",
+    "target_population": {
+      "name": "Iran",
+      "description": "Islamic Republic of Iran, 2012-2015",
+      "inclusion_criteria": ["the single treated unit"]
+    },
+    "unit_of_analysis": "country-year",
+    "treatment": "treatment_start",
+    "outcome": "outcome",
+    "assignment_mechanism": "policy shock imposed on one country in 2012; comparison countries never treated",
+    "time_zero": "2012 (EU oil embargo and central-bank sanctions)",
+    "interference_assessment": "spillovers to trade partners possible but assumed second order for donor inflation",
+    "missingness_plan": "donors restricted to complete 1996-2015 series; exclusions listed in the report",
+    "inference_unit": "country",
+    "sensitivity_plan": "in-space and in-time placebo tests; donor pool rule declared in prepare_panel.py",
+    "primary_analysis": "synthetic control on annual CPI inflation"
+  },
+  "assumption_justifications": {
+    "parallel_trends": "Synthetic-control analogue: absent the 2012 tightening, Iran's inflation would have followed the weighted donor combination that reproduces 1996-2011.",
+    "no_anticipation": "Sanctions were tightened at the end of 2011 and in 2012; earlier anticipation effects would bias the estimate toward zero and are checked with an in-time placebo.",
+    "pre_treatment_support": "Sixteen pre-treatment years (1996-2011).",
+    "stable_composition": "Same countries and the same World Bank CPI definition throughout.",
+    "timing_handled": "A single treated unit with a single start date; no staggered adoption."
+  },
+  "run": {
+    "estimator": {"kind": "synthetic_control", "placebo_period": 2007},
+    "seed": 2026
+  }
+}
