@@ -13,7 +13,7 @@ uv sync --extra dev
 
 ```powershell
 uv run pytest -m "not simulation" -n 6        # fast suite (~1 min)
-$env:OPENBLAS_NUM_THREADS=1; uv run pytest -n 6   # everything, incl. simulations (~2-4 min)
+uv run pytest -n 6                              # everything, incl. simulations (~2-4 min)
 ```
 
 ## 2. Run the three demo analyses
